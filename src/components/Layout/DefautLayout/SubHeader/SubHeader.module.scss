@@ -1,0 +1,63 @@
+.container {
+    height: 200px;
+    background-color: #fff;
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    padding: 15px 40px;
+    box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d;
+}
+
+.column {
+    margin: 0 20px 20px 0;
+    height: 100%;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.options {
+    margin: 10px 0 0 5px;
+    height: 25px;
+}
+
+.grid-tool {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    grid-auto-rows: minmax(20px, auto);
+    height: 80px;
+}
+
+.option {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tool {
+    width: 100%;
+    height: 32px;
+}
+
+.tool img {
+    height: 24px;
+    width: 24px;
+}
+
+.option:is(:hover, .active) img {
+    filter: invert(17%) sepia(90%) saturate(3000%) hue-rotate(900deg) brightness(100%) contrast(100%);
+}
+
+.option :where(span, label) {
+    color: #5a6168;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.option:is(:hover, .active) :where(span, label) {
+    color: #4a98f7;
+}
