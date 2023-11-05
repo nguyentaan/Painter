@@ -1,8 +1,1 @@
-
-function Register() {
-    return ( 
-        <h1>Register</h1>
-     );
-}
-
-export default Register;
+export { default } from './Register.js';
