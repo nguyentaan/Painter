@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Use useNavigate from react-router
 // import axios from 'axios';
-import img1 from '~/./assets/icons/backgroundIMG.avif';
 import { Link } from 'react-router-dom';
 import styles from './Login.module.scss';
 import classNames from 'classnames/bind';
@@ -26,15 +25,15 @@ function Login() {
     //     }
     // }, []);
 
-    const fetchUser = async () => {
-        try {
-            // // const response = await axios.get(`http://localhost:3000/users`);
-            // setUser(response.data);
-            // console.log(response.data);
-        } catch (err) {
-            console.error('Error fetching user: ', err);
-        }
-    };
+    // const fetchUser = async () => {
+    //     try {
+    //         // // const response = await axios.get(`http://localhost:3000/users`);
+    //         // setUser(response.data);
+    //         // console.log(response.data);
+    //     } catch (err) {
+    //         console.error('Error fetching user: ', err);
+    //     }
+    // };
 
     const handleMailChange = (e) => {
         setemail(e.target.value);
@@ -46,21 +45,21 @@ function Login() {
         setHasPasswordError(false);
     };
 
-    const validateForm = () => {
-        let isValid = true;
+    // const validateForm = () => {
+    //     let isValid = true;
 
-        if (!email) {
-            setHasEmailError(true);
-            isValid = false;
-        }
+    //     if (!email) {
+    //         setHasEmailError(true);
+    //         isValid = false;
+    //     }
 
-        if (!password) {
-            setHasPasswordError(true);
-            isValid = false;
-        }
+    //     if (!password) {
+    //         setHasPasswordError(true);
+    //         isValid = false;
+    //     }
 
-        return isValid;
-    };
+    //     return isValid;
+    // };
 
     const navigate = useNavigate(); // Initialize the navigate function
 
