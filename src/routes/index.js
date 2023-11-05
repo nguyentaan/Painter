@@ -5,12 +5,14 @@ import config from '~/config';
 
 // Pages
 import Home from '~/pages/Home';
+import History from '~/pages/History';
 import Login from '~/pages/Login';
 import Register from '~/pages/Register';
 
 // Public routes
 const publicRoutes = [
     { path: config.routes.home, component: Home, layout: DefaultLayout },
+    { path: config.routes.history, component: History, layout: null },
     { path: config.routes.login, component: Login, layout: null },
     { path: config.routes.register, component: Register, layout: null },
 ];

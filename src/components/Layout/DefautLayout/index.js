@@ -1,14 +1,16 @@
 import Header from '~/components/Layout/DefautLayout/Header';
 import SubHeader from '~/components/Layout/DefautLayout/SubHeader';
+import styles from './DefaultLayout.module.scss';
+import classNames from 'classnames/bind';
+
+const cx = classNames.bind(styles);
 
 function DefaultLayout({ children }) {
     return (
-        <div>
+        <div className={cx('wrapper')}>
             <Header />
-            <div className="container">
-                <SubHeader />
-                <div className="content">{children}</div>
-            </div>
+            <SubHeader />
+            <div className={cx('container')}>{children}</div>
         </div>
     );
 }

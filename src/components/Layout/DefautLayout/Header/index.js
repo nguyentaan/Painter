@@ -7,6 +7,8 @@ import config from '~/config';
 import Dialog from '~/components/items/Dialog';
 import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
+import undo from '~/assets/icons/Down-Left.svg';
+import redo from '~/assets/icons/Down-Right.svg';
 
 const cx = classNames.bind(styles);
 
@@ -47,10 +49,23 @@ function Header() {
                         <Dialog onClose={handleCloseDialog} onConfirm={handleCreateItem} />
                     </div>
                 )}
+                <span className={cx('items')} onClick={handleNewButtonClick}>
+                    Edit
+                </span>
+                {isDialogOpen && (
+                    <div className={cx('overlay')} onClick={handleOverlayClick}>
+                        <Dialog onClose={handleCloseDialog} onConfirm={handleCreateItem} />
+                    </div>
+                )}
+                <img src={undo} alt="undo" className={cx('items')} />
+                <img src={redo} alt="redo" className={cx('items')} />
             </div>
+
             {currentUser ? (
                 <div className={cx('right-items')}>
-                    <img src={user} alt="user" className={cx('items-login')} />
+                    <Link to={config.routes.history}>
+                        <img src={user} alt="user" className={cx('items-login')} />
+                    </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
                 </div>
             ) : (
