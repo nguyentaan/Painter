@@ -1,9 +1,10 @@
 .container {
-    height: 200px;
-    background-color: #fff;
+    height: 150px;
+    background-color: var(--bg-color);
+    border: 2px solid var(--main-color);
     width: 100%;
-    margin-bottom: 20px;
     display: flex;
+    justify-content: space-around;
     padding: 15px 40px;
     box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -2px #0000000d;
 }
@@ -25,7 +26,7 @@
 
 .grid-tool {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     grid-auto-rows: minmax(20px, auto);
     height: 80px;
@@ -60,4 +61,97 @@
 
 .option:is(:hover, .active) :where(span, label) {
     color: #4a98f7;
+}
+
+.option #size-slider {
+    width: 100%;
+    height: 5px;
+    margin-top: 10px;
+}
+
+.grid-color {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+    grid-auto-rows: minmax(20px, auto);
+}
+
+.colors .option {
+    height: 20px;
+    width: 20px;
+    border-radius: 99px;
+    margin-top: 3px;
+    position: relative;
+}
+
+.colors .option:nth-child(1) {
+    background-color: #fff;
+    border: 1px solid #bfbfbf;
+}
+.colors .option:nth-child(2) {
+    background-color: #000;
+}
+.colors .option:nth-child(3) {
+    background-color: grey;
+}
+.colors .option:nth-child(4) {
+    background-color: brown;
+}
+.colors .option:nth-child(5) {
+    background-color: pink;
+}
+.colors .option:nth-child(6) {
+    background-color: red;
+}
+.colors .option:nth-child(7) {
+    background-color: orange;
+}
+.colors .option:nth-child(8) {
+    background-color: yellow;
+}
+.colors .option:nth-child(9) {
+    background-color: green;
+}
+.colors .option:nth-child(10) {
+    background-color: #4a98f7;
+}
+.colors .option:nth-child(11) {
+    background-color: blue;
+}
+.colors .option:nth-child(12) {
+    background-color: purple;
+}
+.colors .option:nth-child(13) {
+    background-color: #d2e3c8;
+}
+.colors .option:nth-child(14) {
+    background-color: #f5efe7;
+}
+.colors .option:nth-child(15) {
+    background-color: #f5efe7;
+}
+.colors .option:nth-child(16) {
+    background-color: #f5efe7;
+}
+
+.colors .option.selected::before {
+    position: absolute;
+    content: '';
+    top: 50%;
+    left: 50%;
+    height: 12px;
+    width: 12px;
+    background: inherit;
+    border-radius: inherit;
+    border: 2px solid #fff;
+    transform: translate(-50%, -50%);
+}
+
+.colors .option:first-child.option.selected::before {
+    border-color: #ccc;
+}
+
+.option .color-picker {
+    opacity: 0;
+    cursor: pointer;
 }

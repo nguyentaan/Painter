@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Use useNavigate from react-router
 // import axios from 'axios';
-import img1 from '~/./assets/icons/backgroundIMG.avif';
 import { Link } from 'react-router-dom';
 import styles from './Register.module.scss';
 import classNames from 'classnames/bind';
