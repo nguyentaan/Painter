@@ -1,18 +1,15 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { SizeContext } from '~/components/Layout/DefautLayout';
 import styles from './Dialog.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
 
-function Dialog({ onClose, onConfirm }) {
-    const [width, setWidth] = useState(1080);
-    const [height, setHeight] = useState(720);
+function Dialog({ onClose, onSizeChange }) {
+    const { width, height, setWidth, setHeight, setSize } = useContext(SizeContext);
 
     const handleConfirm = () => {
-        const itemData = { width, height };
-        onConfirm(itemData);
-        setWidth(1080);
-        setHeight(720);
+        setSize(width, height);
         onClose();
     };
     return (
@@ -39,6 +36,7 @@ function Dialog({ onClose, onConfirm }) {
             <button className={cx('button')} onClick={handleConfirm}>
                 Create
             </button>
+
             <button className={cx('button')} onClick={onClose}>
                 Cancel
             </button>

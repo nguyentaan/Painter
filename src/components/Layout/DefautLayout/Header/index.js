@@ -12,7 +12,7 @@ import redo from '~/assets/icons/Down-Right.svg';
 
 const cx = classNames.bind(styles);
 
-function Header() {
+function Header({ onSizeChange }) {
     const [currentUser, setCurrentUser] = useState(true); // Initialize currentUser as true to show user info initially
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -22,10 +22,6 @@ function Header() {
 
     const handleCloseDialog = () => {
         setIsDialogOpen(false);
-    };
-
-    const handleCreateItem = (itemData) => {
-        console.log('Creating item:', itemData);
     };
 
     const handleOverlayClick = (e) => {
@@ -46,15 +42,16 @@ function Header() {
                 </span>
                 {isDialogOpen && (
                     <div className={cx('overlay')} onClick={handleOverlayClick}>
-                        <Dialog onClose={handleCloseDialog} onConfirm={handleCreateItem} />
+                        <Dialog onClose={handleCloseDialog} onSizeChange={onSizeChange} />
                     </div>
                 )}
+
                 <span className={cx('items')} onClick={handleNewButtonClick}>
                     Edit
                 </span>
                 {isDialogOpen && (
                     <div className={cx('overlay')} onClick={handleOverlayClick}>
-                        <Dialog onClose={handleCloseDialog} onConfirm={handleCreateItem} />
+                        <Dialog onClose={handleCloseDialog} />
                     </div>
                 )}
                 <img src={undo} alt="undo" className={cx('items')} />

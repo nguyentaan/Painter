@@ -2,7 +2,14 @@
     width: 100%;
     position: relative;
     display: flex;
-    background-image: url('/assets/icons/Dreams.png');
+    background-image: url('/assets/background/background.jpg');
+    // background: rgb(205, 245, 253);
+    // background: linear-gradient(
+    //     90deg,
+    //     rgba(205, 245, 253, 1) 0%,
+    //     rgba(160, 233, 255, 1) 52%,
+    //     rgba(205, 245, 253, 1) 100%
+    // );
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
