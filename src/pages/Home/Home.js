@@ -12,36 +12,69 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height }) {
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(0);
     const [prevMouseY, setPrevMouseY] = useState(0);
-    // const [snapshot, setSnapshot] = useState(null);
+    const [snapshot, setSnapshot] = useState(null);
     // const undoStack = useRef([]);
     // const redoStack = useRef([]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
-        context.lineCap = 'round';
-        context.strokeStyle = selectedColor;
-        context.lineWidth = brushWidth;
-    }, [selectedColor, brushWidth]);
 
-    const startDrawing = (e) => {
+        const setCanvasBackground = (context) => {
+            context.fillStyle = '#fff';
+            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+            context.fillStyle = selectedColor;
+        };
+
+        if (context) {
+            setCanvasBackground(context);
+        }
+    }, [selectedColor]);
+
+    // const saveCanvasState = (context) => {
+    //     const canvas = context.canvas;
+    //     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    //     // undoStack.current.push(imageData);
+    //     // redoStack.current = []; // Clear the redoStack after saving a new state
+    // };
+
+    const startDraw = (e) => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        if (!context) return;
         setIsDrawing(true);
         setPrevMouseX(e.nativeEvent.offsetX);
         setPrevMouseY(e.nativeEvent.offsetY);
+        // saveCanvasState(context);
+
+        context.beginPath();
+        context.lineCap = 'round';
+        context.strokeStyle = selectedColor;
+        context.lineWidth = brushWidth;
+        setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
     };
 
-    const draw = (e) => {
+    const drawing = (e) => {
         if (!isDrawing) return;
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
-        context.beginPath();
-        context.moveTo(prevMouseX, prevMouseY);
+        if (!context) return;
+        context.putImageData(snapshot, 0, 0);
 
-        if (selectedTool === 'brush') {
-            context.strokeStyle = selectedColor;
-        } else if (selectedTool === 'eraser') {
-            context.strokeStyle = '#fff';
-        } 
+        if (selectedTool === 'brush' || selectedTool === 'eraser') {
+            context.strokeStyle = selectedTool === 'eraser' ? '#fff' : selectedColor;
+            // context.moveTo(prevMouseX, prevMouseY);
+            context.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+            context.stroke();
+        }
+
+        // context.beginPath();
+
+        // if (selectedTool === 'brush') {
+        //     context.strokeStyle = selectedColor;
+        // } else if (selectedTool === 'eraser') {
+        //     context.strokeStyle = '#fff';
+        // }
         // else if (selectedTool === 'line') {
         //     context.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
         //     context.stroke();
@@ -64,8 +97,7 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height }) {
         //     context.stroke();
         // }
 
-        context.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-        context.stroke();
+
         setPrevMouseX(e.nativeEvent.offsetX);
         setPrevMouseY(e.nativeEvent.offsetY);
     };
@@ -74,18 +106,14 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height }) {
         setIsDrawing(false);
     };
 
-    console.log(selectedTool);
-    console.log(selectedColor);
-    console.log(brushWidth);
-
     return (
         <section className={cx('drawing-board')}>
             <canvas
                 ref={canvasRef}
                 width={width}
                 height={height}
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
+                onMouseDown={startDraw}
+                onMouseMove={drawing}
                 onMouseUp={stopDrawing}
                 onMouseLeave={stopDrawing}
             ></canvas>
