@@ -31,16 +31,16 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
     const colorOptions = [
         '#fff',
         '#000',
-        'grey',
-        'brown',
-        'pink',
-        'red',
-        'orange',
-        'yellow',
-        'green',
+        '#A9A9A9',
+        '#765827',
+        '#F875AA',
+        '#D80032',
+        '#FF6C22',
+        '#FFFB73',
+        '#A7D397',
         '#4a98f7',
-        'blue',
-        'purple',
+        '#39A7FF',
+        '#B15EFF',
         '#d2e3c8',
     ];
 
@@ -57,7 +57,7 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
                     <li
                         className={cx('option', 'tool', { active: selectedTool === 'line' })}
                         id="line"
-                        onClick={() => handleToolClick('Line')}
+                        onClick={() => handleToolClick('line')}
                     >
                         <img src={Line} alt="Line" />
                         <span>Line</span>
