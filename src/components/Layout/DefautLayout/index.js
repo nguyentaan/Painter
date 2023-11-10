@@ -45,6 +45,11 @@ function DefaultLayout() {
                         height={height}
                     />
                 </div>
+                {/* <div className={cx('container')}>
+                    <Footer
+                    />
+                </div> */}
+                
             </div>
         </SizeContext.Provider>
     );
