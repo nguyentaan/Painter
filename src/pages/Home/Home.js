@@ -1,11 +1,13 @@
 import styles from './Home.module.scss';
 import classNames from 'classnames/bind';
+import undoAction from '~/assets/icons/rotate-left-solid.svg';
+import redoAction from '~/assets/icons/rotate-right-solid.svg';
 
 import { useEffect, useRef, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function Home({ selectedTool, brushWidth, selectedColor, width, height }) {
+function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
     const canvasRef = useRef(null);
     // const offscreenCanvasRef = useRef(null); // Reference for the offscreen canvas
 
@@ -14,40 +16,72 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height }) {
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
 
-    // const undoStack = useRef([]);
-    // const redoStack = useRef([]);
+    const undoStack = useRef([]);
+    const redoStack = useRef([]);
 
-    useEffect(() => {
+useEffect(() => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    if (context) {
+        setCanvasBackground(context);
+        setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+    }
+    if (isClear) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        clearCanvas();
+    }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [isClear]);
+
+
+
+    const setCanvasBackground = (context) => {
+        context.fillStyle = '#fff';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        context.fillStyle = selectedColor;
+    };
+
+    const saveCanvasState = (context) => {
+        const canvas = context.canvas;
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        undoStack.current.push(imageData);
+        redoStack.current = []; // Clear the redoStack after saving a new state
+    };
+
+    const undo = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
+        if (!context) return;
 
-        const setCanvasBackground = (context) => {
-            context.fillStyle = '#fff';
-            context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-            context.fillStyle = selectedColor;
-        };
-
-        if (context) {
-            setCanvasBackground(context);
-            setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+        if (undoStack.current.length > 0) {
+            const lastState = undoStack.current.pop();
+            redoStack.current.push(context.getImageData(0, 0, canvas.width, canvas.height));
+            context.putImageData(lastState, 0, 0);
         }
-    }, [selectedColor]);
+    };
 
-    // const saveCanvasState = (context) => {
-    //     const canvas = context.canvas;
-    //     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    //     // undoStack.current.push(imageData);
-    //     // redoStack.current = []; // Clear the redoStack after saving a new state
-    // };
+    const redo = () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+
+        if (redoStack.current.length > 0) {
+            const nextState = redoStack.current.pop();
+            undoStack.current.push(context.getImageData(0, 0, canvas.width, canvas.height));
+            context.putImageData(nextState, 0, 0);
+        }
+    };
 
     const startDraw = (e) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
         setIsDrawing(true);
+        setIsClear(false);
         setPrevMouseX(e.nativeEvent.offsetX);
         setPrevMouseY(e.nativeEvent.offsetY);
-        // saveCanvasState(context);
+        saveCanvasState(context);
 
         context.beginPath();
         context.lineCap = 'round';
@@ -191,33 +225,6 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height }) {
             }
         }
     };
-    // const getFillColor = () => {
-    //     const colorString = selectedColor;
-    //     const regex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/;
-    //     const match = colorString.match(regex);
-
-    //     if (match) {
-    //         const red = parseInt(match[1], 10);
-    //         const green = parseInt(match[2], 10);
-    //         const blue = parseInt(match[3], 10);
-
-    //         if (
-    //             !isNaN(red) &&
-    //             !isNaN(green) &&
-    //             !isNaN(blue) &&
-    //             red >= 0 &&
-    //             red <= 255 &&
-    //             green >= 0 &&
-    //             green <= 255 &&
-    //             blue >= 0 &&
-    //             blue <= 255
-    //         ) {
-    //             return [red, green, blue, 255]; // Return a default alpha value of 255 (fully opaque)
-    //         }
-    //     }
-
-    //     return [0, 0, 0, 255]; // Return a default color if the string doesn't match the expected format or contains invalid values
-    // };
 
     const getFillColor = () => {
         const colorString = selectedColor.toLowerCase();
@@ -294,11 +301,40 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height }) {
         if (context) setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
     };
 
+    const clearCanvas = () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+
+        if (!context) return;
+
+        //Clear Canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        setCanvasBackground(context);
+    };
+
     console.log('selected color: ', selectedColor);
     console.log('selected tool: ', selectedTool);
 
     return (
         <section className={cx('drawing-board')}>
+            <div className={cx('actions')}>
+                <button
+                    className={cx(styles['button'], { [styles['disabled-button']]: undoStack.current.length === 0 })}
+                    onClick={undo}
+                    disabled={undoStack.current.length === 0}
+                >
+                    {' '}
+                    <img src={undoAction} alt="undo" className={cx('items')} />
+                </button>
+                <button
+                    className={cx(styles['button'], { [styles['disabled-button']]: redoStack.current.length === 0 })}
+                    onClick={redo}
+                    disabled={redoStack.current.length === 0}
+                >
+                    {' '}
+                    <img src={redoAction} alt="redo" className={cx('items')} />
+                </button>
+            </div>
             <canvas
                 ref={canvasRef}
                 width={width}
