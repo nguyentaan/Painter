@@ -7,8 +7,7 @@ import config from '~/config';
 import Dialog from '~/components/items/Dialog';
 import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
-import undo from '~/assets/icons/Down-Left.svg';
-import redo from '~/assets/icons/Down-Right.svg';
+
 
 const cx = classNames.bind(styles);
 
@@ -54,8 +53,7 @@ function Header({ onSizeChange }) {
                         <Dialog onClose={handleCloseDialog} />
                     </div>
                 )}
-                <img src={undo} alt="undo" className={cx('items')} />
-                <img src={redo} alt="redo" className={cx('items')} />
+
             </div>
 
             {currentUser ? (
