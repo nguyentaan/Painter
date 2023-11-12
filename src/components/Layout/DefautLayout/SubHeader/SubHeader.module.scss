@@ -29,7 +29,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     grid-auto-rows: minmax(20px, auto);
-    height: 80px;
+    height: 45px;
 }
 
 .option {
@@ -63,10 +63,9 @@
     color: #4a98f7;
 }
 
-.option #size-slider {
+.size-slider {
     width: 100%;
-    height: 5px;
-    margin-top: 10px;
+    height: 10px;
 }
 
 .grid-color {
@@ -85,53 +84,52 @@
 }
 
 // .colors .option:nth-child(1) {
-//     background-color: #fff;
-//     border: 1px solid #bfbfbf;
-// }
-// .colors .option:nth-child(2) {
 //     background-color: #000;
 // }
+// .colors .option:nth-child(2) {
+//     background-color: #A9A9A9;
+// }
 // .colors .option:nth-child(3) {
-//     background-color: grey;
+//     background-color: #765827;
 // }
 // .colors .option:nth-child(4) {
-//     background-color: brown;
+//     background-color: #F875AA;
 // }
 // .colors .option:nth-child(5) {
-//     background-color: pink;
+//     background-color: #D80032;
 // }
 // .colors .option:nth-child(6) {
-//     background-color: red;
+//     background-color: #FF6C22;
 // }
 // .colors .option:nth-child(7) {
-//     background-color: orange;
+//     background-color: #FFFB73;
 // }
 // .colors .option:nth-child(8) {
-//     background-color: yellow;
+//     background-color: #A7D397;
 // }
 // .colors .option:nth-child(9) {
-//     background-color: green;
+//     background-color: #4a98f7;
 // }
 // .colors .option:nth-child(10) {
 //     background-color: #4a98f7;
 // }
 // .colors .option:nth-child(11) {
-//     background-color: blue;
+//     background-color: #39A7FF;
 // }
 // .colors .option:nth-child(12) {
-//     background-color: purple;
+//     background-color: #B15EFF;
 // }
-// .colors .option:nth-child(13) {
-//     background-color: #d2e3c8;
-// }
+.colors .option:nth-child(13) {
+    background-color: #fff;
+}
 .colors .option:nth-child(14) {
-    background-color: #f5efe7;
+    background-color: #fff;
 }
 .colors .option:nth-child(15) {
-    background-color: #f5efe7;
+    background-color: #fff;
 }
 .colors .option:nth-child(16) {
-    background-color: #f5efe7;
+    background-color: #fff;
 }
 
 .colors .option.selected::before {
@@ -154,4 +152,26 @@
 .option .color-picker {
     opacity: 0;
     cursor: pointer;
+}
+
+.df{
+    display: flex;
+    align-items: center;
+}
+
+.button-clear {
+    color: var(--font-color);
+    border: 2px solid var(--main-color);
+    background-color: lightblue;
+    font-weight: 600;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px var(--main-color);
+    &:hover {
+        box-shadow: 0px 0px var(--main-color);
+        transform: translate(3px, 3px);
+    }
 }

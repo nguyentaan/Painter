@@ -1,15 +1,45 @@
 .drawing-board {
     background-color: #f5efe7;
-    padding: 0 40px 40px;
+    padding: 50px;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    // margin: 50px;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.button {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 12px;
+    margin: 8px;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+        background: rgba(170, 170, 170, 0.62);
+        transition: 0.05s;
+    }
+}
+
+.disabled-button {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.items {
+    width: 24px;
 }
 
 canvas {
     background-color: white;
-    margin: 50px;
     cursor: crosshair;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }

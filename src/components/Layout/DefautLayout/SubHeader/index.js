@@ -12,8 +12,32 @@ import { useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, selectedColor, setSelectedColor }) {
-    // const [colorPickerBackgroundColor, setColorPickerBackgroundColor] = useState(selectedColor);
+function SubHeader({
+    selectedTool,
+    setSelectedTool,
+    brushWidth,
+    setBrushWidth,
+    selectedColor,
+    setSelectedColor,
+    setIsClear,
+}) {
+    const colorOptions = [
+        '#A9A9A9',
+        '#000',
+        '#765827',
+        '#F875AA',
+        '#D80032',
+        '#FF6C22',
+        '#FFFB73',
+        '#A7D397',
+        '#4a98f7',
+        '#39A7FF',
+        '#B15EFF',
+        '#d2e3c8',
+    ];
+
+    // State to track the selected color
+    const [selectedColorIndex, setSelectedColorIndex] = useState(1);
 
     const handleToolClick = (tool) => {
         setSelectedTool(tool.toLowerCase()); // Convert the tool ID to lowercase
@@ -25,24 +49,9 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
         setBrushWidth(newBrushWidth); // Update the brush width in the parent component
     };
 
-    // State to track the selected color
-    const [selectedColorIndex, setSelectedColorIndex] = useState(1);
-
-    const colorOptions = [
-        '#fff',
-        '#000',
-        'grey',
-        'brown',
-        'pink',
-        'red',
-        'orange',
-        'yellow',
-        'green',
-        '#4a98f7',
-        'blue',
-        'purple',
-        '#d2e3c8',
-    ];
+    const handleClearCanvas = () => {
+        setIsClear(true);
+    };
 
     const handleColorClick = (color, index) => {
         setSelectedColor(color.toLowerCase());
@@ -57,7 +66,7 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
                     <li
                         className={cx('option', 'tool', { active: selectedTool === 'line' })}
                         id="line"
-                        onClick={() => handleToolClick('Line')}
+                        onClick={() => handleToolClick('line')}
                     >
                         <img src={Line} alt="Line" />
                         <span>Line</span>
@@ -128,21 +137,18 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
                         <img src={Select} alt="Select" />
                         <span>Select</span>
                     </li>
-                    <li className={cx('option', 'tool')}>
-                        <input
-                            type="range"
-                            id="size-slider"
-                            min={1}
-                            max={30}
-                            value={brushWidth}
-                            onChange={handleBrushWidthChange}
-                        />
-                    </li>
-                    {/* <li className={cx('option')}>
-                            <input type="checkbox" id="fill-color"></input>
-                            <label for="fill-color">Fill color</label>
-                        </li> */}
                 </ul>
+                <div className={cx('option', 'tool', 'slider')}>
+                    <input
+                        type="range"
+                        className={cx('size-slider')}
+                        id="size-slider"
+                        min={1}
+                        max={80}
+                        value={brushWidth}
+                        onChange={handleBrushWidthChange}
+                    />
+                </div>
             </div>
             {/* ----------------------------Color--------------------- */}
             <div className={cx('column', 'colors')}>
@@ -173,7 +179,7 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
                             type="color"
                             className={cx('color-picker')}
                             value="#FFF4F4"
-                            onChange={(e) => setSelectedColor(e.target.value)}
+                            onChange={(e) => handleColorClick(e.target.value, colorOptions.length)}
                         />
                     </li>
                     <li className={cx('option')}>
@@ -181,7 +187,8 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
                             type="color"
                             className={cx('color-picker')}
                             value="#FFF4F4"
-                            onChange={(e) => setSelectedColor(e.target.value)}
+                            onChange={(e) => handleColorClick(e.target.value, colorOptions.length)}
+                            style={{ backgroundColor: selectedColor }}
                         />
                     </li>
                     <li className={cx('option')}>
@@ -189,10 +196,24 @@ function SubHeader({ selectedTool, setSelectedTool, brushWidth, setBrushWidth, s
                             type="color"
                             className={cx('color-picker')}
                             value="#FFF4F4"
-                            onChange={(e) => setSelectedColor(e.target.value)}
+                            onChange={(e) => handleColorClick(e.target.value, colorOptions.length)}
+                        />
+                    </li>
+                    <li className={cx('option')}>
+                        <input
+                            type="color"
+                            className={cx('color-picker')}
+                            value="#FFF4F4"
+                            onChange={(e) => handleColorClick(e.target.value, colorOptions.length)}
+                            style={{ backgroundColor: selectedColor }}
                         />
                     </li>
                 </ul>
+            </div>
+            <div className={cx('column', 'df')}>
+                <button onClick={handleClearCanvas} className={cx('button-clear')}>
+                    Clear canvas
+                </button>
             </div>
         </section>
     );

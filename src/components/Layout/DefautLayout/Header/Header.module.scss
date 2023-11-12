@@ -2,13 +2,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 50px;
     border-bottom: 1px solid #ccc;
     top: 0;
     left: 0;
     z-index: 10;
     background-color: lightblue;
     border: 2px solid var(--main-color);
+    padding: 8px 40px;
 }
 
 .overlay {
@@ -35,10 +35,7 @@
     height: 34px;
     margin-right: 40px;
     display: flex;
-
 }
-
-
 
 .items {
     font-size: 22px;
@@ -62,9 +59,7 @@
         box-shadow: 0px 0px var(--main-color);
         transform: translate(3px, 3px);
     }
-
 }
-
 
 .items-login {
     cursor: pointer;
