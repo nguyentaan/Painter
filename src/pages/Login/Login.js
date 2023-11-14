@@ -1,27 +1,16 @@
-import {
-    useState,
-    useEffect
-} from 'react';
-import {
-    Link
-} from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './Login.module.scss';
 import classNames from 'classnames/bind';
 import axios from 'axios';
-import {
-    useNavigate
-} from 'react-router-dom';
-import {
-    useUser
-} from '../../hook/UserContext';
-
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../hook/UserContext';
 
 const cx = classNames.bind(styles);
 //Production
-const path = "https://backendpainter-v1.onrender.com"
+const path = 'https://backendpainter-v1.onrender.com';
 //Testing
 // const path =  "http://localhost:8081"
-
 
 function Login() {
     const [user, setUser] = useState([]);
@@ -31,11 +20,8 @@ function Login() {
     const [hasPasswordError, setHasPasswordError] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
-    const {
-        login
-    } = useUser();
+    const { login } = useUser();
     const navigate = useNavigate();
-
 
     useEffect(() => {
         fetchUser();
@@ -133,126 +119,66 @@ function Login() {
         }
     };
 
-    return ( <
-        div className = {
-            cx('Desktop3')
-        } >
-        <
-        div className = {
-            cx('Login')
-        } >
-        <
-        div className = {
-            cx('text')
-        } >
-        <
-        h2 > LOGIN < /h2> < /
-        div > <
-        form onSubmit = {
-            handleSubmit
-        }
-        className = {
-            cx('form')
-        } >
-        <
-        label htmlFor = "uname" >
-        <
-        b > User Name < /b> < /
-        label > <
-        input placeholder = "Enter email"
-        type = "text"
-        id = "email"
-        value = {
-            email
-        }
-        onChange = {
-            handleMailChange
-        }
-        className = {
-            cx({
-                error: hasEmailError,
-            })
-        }
-        required /
-        >
-        {
-            hasEmailError && < p className = "error-message" > Please enter a valid email < /p>}
+    return (
+        <div className={cx('Desktop3')}>
+            <div className={cx('Login')}>
+                <div className={cx('text')}>
+                    <h2> LOGIN </h2>{' '}
+                </div>{' '}
+                <form onSubmit={handleSubmit} className={cx('form')}>
+                    <label htmlFor="uname">
+                        <b> User Name </b>{' '}
+                    </label>{' '}
+                    <input
+                        placeholder="Enter email"
+                        type="text"
+                        id="email"
+                        value={email}
+                        onChange={handleMailChange}
+                        className={cx({
+                            error: hasEmailError,
+                        })}
+                        required
+                    />
+                    {hasEmailError && <p className="error-message"> Please enter a valid email </p>}
+                    <label htmlFor="psw">
+                        <b> Password </b>{' '}
+                    </label>{' '}
+                    <input
+                        placeholder="Enter password"
+                        type="password"
+                        id="password"
+                        value={password}
+                        onChange={handlePasswordChange}
+                        className={cx({
+                            error: hasPasswordError,
+                        })}
+                        required
+                    />
+                    <div className={cx('regis')}>
+                        <p className={cx('regis')}>
+                            <i>
+                                <Link to="/register"> Do not have an account ? </Link>{' '}
+                            </i>{' '}
+                        </p>{' '}
+                    </div>
+                    <label className={cx('check')}>
+                        <input
+                            type="checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            name="remember"
+                        />{' '}
+                        Remember me{' '}
+                    </label>
+                    <button className={cx('button')} type="submit" disabled={loading}>
+                        {' '}
+                        {loading ? 'Signing in...' : 'Sign in'}{' '}
+                    </button>{' '}
+                </form>{' '}
+            </div>{' '}
+        </div>
+    );
+}
 
-            <
-            label htmlFor = "psw" >
-            <
-            b > Password < /b> < /
-            label > <
-            input
-            placeholder = "Enter password"
-            type = "password"
-            id = "password"
-            value = {
-                password
-            }
-            onChange = {
-                handlePasswordChange
-            }
-            className = {
-                cx({
-                    error: hasPasswordError,
-                })
-            }
-            required /
-            >
-
-            <
-            div className = {
-                cx('regis')
-            } >
-            <
-            p className = {
-                cx('regis')
-            } >
-            <
-            i >
-            <
-            Link to = "/register" > Do not have an account ? < /Link> < /
-            i > <
-            /p> < /
-            div >
-
-            <
-            label className = {
-                cx('check')
-            } >
-            <
-            input
-            type = "checkbox"
-            checked = {
-                rememberMe
-            }
-            onChange = {
-                (e) => setRememberMe(e.target.checked)
-            }
-            name = "remember" /
-            >
-            {
-                ' '
-            }
-            Remember me <
-            /label>
-
-            <
-            button className = {
-                cx('button')
-            }
-            type = "submit"
-            disabled = {
-                loading
-            } > {
-                loading ? 'Signing in...' : 'Sign in'
-            } <
-            /button> < /
-            form > <
-            /div> < /
-            div >
-        );
-    }
-
-    export default Login;
+export default Login;

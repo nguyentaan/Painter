@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext} from 'react';
 import { SizeContext } from '~/components/Layout/DefautLayout';
 import styles from './Dialog.module.scss';
 import classNames from 'classnames/bind';

@@ -1,9 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import Home from '~/pages/Home';
-// import Login from '~/pages/Login';
 import { publicRoutes } from './routes';
 import DefaultLayout from './components/Layout/DefautLayout';
-// import DefaultLayout from '/components/Layout/DefautLayout';
 import { Fragment } from 'react';
 import { UserProvider } from './hook/UserContext';
 
