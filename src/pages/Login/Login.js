@@ -17,8 +17,10 @@ import {
 
 
 const cx = classNames.bind(styles);
-// const path = "https://backendpainter-v1.onrender.com"
-const path =  "http://localhost:8081"
+//Production
+const path = "https://backendpainter-v1.onrender.com"
+//Testing
+// const path =  "http://localhost:8081"
 
 
 function Login() {
