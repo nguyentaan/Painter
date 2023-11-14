@@ -1,0 +1,12 @@
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-image: url("../../assets/background/Blue.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.container{
+    flex: 1;
+}

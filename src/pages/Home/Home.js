@@ -312,8 +312,8 @@ useEffect(() => {
         setCanvasBackground(context);
     };
 
-    console.log('selected color: ', selectedColor);
-    console.log('selected tool: ', selectedTool);
+    // console.log('selected color: ', selectedColor);
+    // console.log('selected tool: ', selectedTool);
 
     return (
         <section className={cx('drawing-board')}>

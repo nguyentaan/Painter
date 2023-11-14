@@ -3,18 +3,23 @@ import {
     useEffect
 } from 'react';
 import {
-    useNavigate
-} from 'react-router-dom';
-// Use useNavigate from react-router
-import {
     Link
 } from 'react-router-dom';
 import styles from './Login.module.scss';
 import classNames from 'classnames/bind';
 import axios from 'axios';
+import {
+    useNavigate
+} from 'react-router-dom';
+import {
+    useUser
+} from '../../hook/UserContext';
+
 
 const cx = classNames.bind(styles);
-const path = "https://backendpainter-v1.onrender.com"
+// const path = "https://backendpainter-v1.onrender.com"
+const path =  "http://localhost:8081"
+
 
 function Login() {
     const [user, setUser] = useState([]);
@@ -24,7 +29,11 @@ function Login() {
     const [hasPasswordError, setHasPasswordError] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
+    const {
+        login
+    } = useUser();
     const navigate = useNavigate();
+
 
     useEffect(() => {
         fetchUser();
@@ -41,7 +50,7 @@ function Login() {
         try {
             const response = await axios.get(`${path}/users`);
             setUser(response.data);
-            console.log(response.data);
+            // console.log(response)
         } catch (err) {
             console.error('Error fetching user: ', err);
         }
@@ -59,38 +68,40 @@ function Login() {
 
     const validateForm = () => {
         let isValid = true;
-
         if (!email) {
             setHasEmailError(true);
             isValid = false;
         }
-
         if (!password) {
             setHasPasswordError(true);
             isValid = false;
         }
-
         return isValid;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (validateForm()) {
             setLoading(true);
-
             try {
                 const foundUser = user.find((u) => u.email === email);
-
                 if (foundUser) {
                     if (foundUser.password && foundUser.password === password) {
-                        alert('Login successfully'); // You might want to replace this with a more user-friendly notification
+                        const userInfo = {
+                            user_id: foundUser.user_id,
+                            user_email: foundUser.email,
+                            user_role: foundUser.role,
+                        };
+                        // Call the login function from useUser context
+                        login(userInfo);
+                        // You might want to replace this with a more user-friendly notification
+                        alert('Login successfully');
                         if (foundUser.role === 'admin') {
-                            navigate('/admin');
-                        } else if (foundUser.role === 'leaders') {
-                            navigate('/community-leader');
-                        } else {
                             navigate('/');
+                        } else if (foundUser.role === 'user') {
+                            navigate('/');
+                        } else {
+                            // navigate('/');
                         }
 
                         // Store email and "rememberMe" flag in local storage if "Remember me" is checked
@@ -114,7 +125,6 @@ function Login() {
                 }
             } catch (error) {
                 console.error('Error during login:', error);
-                // Handle the error more gracefully, perhaps show an error message to the user
             } finally {
                 setLoading(false);
             }
@@ -134,8 +144,8 @@ function Login() {
             cx('text')
         } >
         <
-        h2 > LOGIN < /h2> <
-        /div> <
+        h2 > LOGIN < /h2> < /
+        div > <
         form onSubmit = {
             handleSubmit
         }
@@ -145,8 +155,8 @@ function Login() {
         <
         label htmlFor = "uname" >
         <
-        b > User Name < /b> <
-        /label> <
+        b > User Name < /b> < /
+        label > <
         input placeholder = "Enter email"
         type = "text"
         id = "email"
@@ -162,14 +172,15 @@ function Login() {
             })
         }
         required /
-        > {
+        >
+        {
             hasEmailError && < p className = "error-message" > Please enter a valid email < /p>}
 
             <
             label htmlFor = "psw" >
             <
-            b > Password < /b> <
-            /label> <
+            b > Password < /b> < /
+            label > <
             input
             placeholder = "Enter password"
             type = "password"
@@ -199,10 +210,10 @@ function Login() {
             <
             i >
             <
-            Link to = "/register" > Do not have an account ? < /Link> <
-            /i> <
-            /p> <
-            /div>
+            Link to = "/register" > Do not have an account ? < /Link> < /
+            i > <
+            /p> < /
+            div >
 
             <
             label className = {
@@ -218,7 +229,8 @@ function Login() {
                 (e) => setRememberMe(e.target.checked)
             }
             name = "remember" /
-            > {
+            >
+            {
                 ' '
             }
             Remember me <
@@ -234,10 +246,10 @@ function Login() {
             } > {
                 loading ? 'Signing in...' : 'Sign in'
             } <
-            /button> <
-            /form> <
-            /div> <
-            /div>
+            /button> < /
+            form > <
+            /div> < /
+            div >
         );
     }
 
