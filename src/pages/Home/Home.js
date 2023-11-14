@@ -16,25 +16,24 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
 
+
     const undoStack = useRef([]);
     const redoStack = useRef([]);
 
-useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
 
-    if (context) {
-        setCanvasBackground(context);
-        setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
-    }
-    if (isClear) {
+        if (context) {
+            setCanvasBackground(context);
+            setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+        }
+        if (isClear) {
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            clearCanvas();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        clearCanvas();
-    }
-// eslint-disable-next-line react-hooks/exhaustive-deps
-}, [isClear]);
-
-
+    }, [isClear]);
 
     const setCanvasBackground = (context) => {
         context.fillStyle = '#fff';

@@ -14,8 +14,7 @@ function DefaultLayout() {
     const [brushWidth, setBrushWidth] = useState(5);
     const [selectedColor, setSelectedColor] = useState('rgb(0,0,0)');
     const [isClear, setIsClear] = useState(false);
-    const [isUndo, setIsUndo] = useState(false);
-    const [isRedo, setIsRedo] = useState(false);
+    // const [isDraging, setIsDragging] = useState(false);
 
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
@@ -28,13 +27,11 @@ function DefaultLayout() {
     };
 
     console.log('is clear: ', isClear);
-    console.log('is  undo: ', isUndo);
-    console.log('is redo: ', isRedo);
 
     return (
         <SizeContext.Provider value={{ width, height, setWidth, setHeight, setSize }}>
             <div className={cx('wrapper')}>
-                <Header setIsUndo={setIsUndo} setIsRedo={setIsRedo} />
+                <Header/>
                 <SubHeader
                     selectedTool={selectedTool}
                     setSelectedTool={setSelectedTool}
@@ -42,6 +39,7 @@ function DefaultLayout() {
                     setBrushWidth={setBrushWidth}
                     setSelectedColor={setSelectedColor}
                     setIsClear={setIsClear}
+                    // setIsDragging={setIsDragging}
                 />
                 <div className={cx('container')}>
                     <Home
@@ -52,10 +50,6 @@ function DefaultLayout() {
                         height={height}
                         isClear={isClear}
                         setIsClear={setIsClear}
-                        isRedo={isRedo}
-                        setIsRedo={setIsRedo}
-                        isUndo={isUndo}
-                        setIsUndo={setIsUndo}
                     />
                 </div>
             </div>
