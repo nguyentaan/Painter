@@ -1,11 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate from react-router
-// import axios from 'axios';
-import { Link } from 'react-router-dom';
+import {
+    useState,
+    useEffect
+} from 'react';
+import {
+    useNavigate
+} from 'react-router-dom';
+import axios from 'axios';
+import {
+    Link
+} from 'react-router-dom';
+import {
+    isEmail
+} from 'validator';
 import styles from './Register.module.scss';
 import classNames from 'classnames/bind';
 
 const cx = classNames.bind(styles);
+const path = "https://backendpainter-v1.onrender.com"
 
 function Register() {
     const [user, setUser] = useState([]);
@@ -19,16 +30,9 @@ function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordMismatch, setPasswordMismatch] = useState(false);
 
-    // useEffect(() => {
-    //     fetchUser();
-    //     // Check local storage for "rememberMe" flag and email
-    //     const storedRememberMe = localStorage.getItem('rememberMe');
-    //     const storedEmail = localStorage.getItem('email');
-    //     if (storedRememberMe === 'true' && storedEmail) {
-    //         setRememberMe(true);
-    //         setemail(storedEmail);
-    //     }
-    // }, []);
+    useEffect(() => {
+        fetchUser();
+    }, []);
 
     const handleMailChange = (e) => {
         setEmail(e.target.value);
@@ -43,37 +47,42 @@ function Register() {
     const handleConfirmPasswordChange = (e) => {
         setConfirmPassword(e.target.value);
         setPasswordMismatch(false);
-
     };
 
     const fetchUser = async () => {
         try {
-            //   const response = await axios.get(`http://localhost:3000/users`);
-            //   setUser(response.data);
-            //   console.log(response.data);
+            const response = await axios.get(`${path}/users`);
+            setUser(response.data);
+            console.log(response.data);
         } catch (err) {
             console.error('Error fetching user: ', err);
         }
     };
 
     const handleRegisterUser = (user) => {
-        // axios
-        //   .post(`http://localhost:3000/register`, user)
-        //   .then(() => {
-        //     alert('User registration successfully');
-        //     fetchUser();
-        //   })
-        //   .catch((err) => console.log(err));
+        return axios
+            .post(`${path}/create-user/`, user)
+            .then(() => {
+                alert('User registration successfully');
+                fetchUser();
+            })
+            .catch((err) => {
+                console.log(err);
+                throw err; // Rethrow the error to be caught in the calling code
+            });
     };
 
     const validateForm = () => {
         let isValid = true;
 
-        if (!email) {
+        if (!email || !isEmail(email)) {
             setHasEmailError(true);
             isValid = false;
         } else if (user.some((u) => u.email === email)) {
+            setHasEmailError(true);
             isValid = false;
+        } else {
+            setHasEmailError(false);
         }
 
         if (!confirmPassword || password !== confirmPassword) {
@@ -86,11 +95,14 @@ function Register() {
         if (!password) {
             setHasPasswordError(true);
             isValid = false;
+        } else {
+            setHasPasswordError(false);
         }
+
         return isValid;
     };
 
-    const navigate = useNavigate(); // Initialize the navigate function
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -101,80 +113,127 @@ function Register() {
                 password,
                 role: 'user',
             };
-            handleRegisterUser(userData);
-            console.log('User registered successfully');
-            // Reset the form fields after successful submission
-            setEmail('');
-            setPassword('');
-            setConfirmPassword('');
+            handleRegisterUser(userData)
+                .then(() => {
+                    console.log('User registered successfully');
+                    setEmail('');
+                    setPassword('');
+                    setConfirmPassword('');
+                })
+                .catch((error) => {
+                    console.error('Error registering user:', error);
+                });
         }
-        navigate('/login');
     };
 
-    return (
-        <div className={cx('Desktop3')}>
-            <div className={cx('Login')}>
-                <div className={cx('text')}>
-                    <h2>Register</h2>
-                </div>
-                <form onSubmit={handleSubmit} className={cx('form')}>
-                    <label for="uname">
-                        <b>User Name</b>
-                    </label>
-                    <input
-                        placeholder="Enter email"
-                        type="text"
-                        id="email"
-                        value={email}
-                        onChange={handleMailChange}
-                        className={cx({
-                            error: !hasEmailError,
-                        })}
-                        required
-                    />
+    return ( <
+            div className = {
+                cx('Desktop3')
+            } >
+            <
+            div className = {
+                cx('Login')
+            } >
+            <
+            div className = {
+                cx('text')
+            } >
+            <
+            h2 > Register < /h2> < /
+            div > <
+            form onSubmit = {
+                handleSubmit
+            }
+            className = {
+                cx('form')
+            } >
+            <
+            label htmlFor = "uname" >
+            <
+            b > User Name < /b> < /
+            label > <
+            input placeholder = "Enter your email"
+            type = "text"
+            id = "email"
+            value = {
+                email
+            }
+            onChange = {
+                handleMailChange
+            }
+            className = {
+                cx({
+                    error: hasEmailError,
+                })
+            }
+            required /
+            >
+            {
+                hasEmailError && < p className = "error-message" > Invalid email format or email already exists < /p>}
 
-                    <label for="psw">
-                        <b>Password</b>
-                    </label>
-                    <input
-                        placeholder="Enter password"
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={handlePasswordChange}
-                        className={cx({
-                            error: !hasPasswordError,
-                        })}
-                        required
-                    />
+                <
+                label htmlFor = "psw" >
+                <
+                b > Password < /b> < /
+                label > <
+                input
+                placeholder = "Enter password"
+                type = "password"
+                id = "password"
+                value = {
+                    password
+                }
+                onChange = {
+                    handlePasswordChange
+                }
+                className = {
+                    cx({
+                        error: hasPasswordError,
+                    })
+                }
+                required /
+                >
 
+                <
+                label htmlFor = "psw" >
+                <
+                b > Confirm Password < /b> < /
+                label > <
+                input
+                placeholder = "Confirm password"
+                type = "password"
+                id = "password"
+                value = {
+                    confirmPassword
+                }
+                onChange = {
+                    handleConfirmPasswordChange
+                }
+                className = {
+                    cx({
+                        error: hasPasswordError,
+                    })
+                }
+                required /
+                >
+                {
+                    passwordMismatch && < p className = "error-message" > Passwords do not match < /p>}
 
-                    <label for="psw">
-                        <b>Confirm Password</b>
-                    </label>
-                    <input
-                        placeholder="Confirm password"
-                        type="password"
-                        id="password"
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
-                        className={cx({
-                            error: !hasPasswordError,
-                        })}
-                        required
-                    />
-                    {passwordMismatch && (
-                        <p className="error-message">Passwords do not match</p>
-                    )}
+                        <
+                        button className = {
+                            cx('button')
+                        }
+                    type = "submit"
+                    onClick = {
+                        handleSubmit
+                    } >
+                    Register <
+                    /button> <
+                    Link to = "/login" > Already have an account ? < /Link> < /
+                    form > <
+                    /div> < /
+                    div >
+                );
+            }
 
-                    <button className={cx('button')} type="submit" onClick={handleSubmit}>
-                        Register
-                    </button>
-                    <Link to="/login">Already have account?</Link>
-
-                </form>
-            </div>
-        </div>
-    );
-}
-export default Register;
+            export default Register;

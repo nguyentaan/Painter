@@ -11,8 +11,8 @@ import exit from '~/assets/icons/Exit-1.svg';
 
 const cx = classNames.bind(styles);
 
-function Header({ onSizeChange }) {
-    const [currentUser, setCurrentUser] = useState(true); // Initialize currentUser as true to show user info initially
+function Header({ onSizeChange , userInfo , handleLogout}) {
+    const [currentUser, setCurrentUser] = useState(userInfo);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const handleNewButtonClick = () => {
@@ -30,9 +30,9 @@ function Header({ onSizeChange }) {
     };
 
     const handleQuit = () => {
-        setCurrentUser(false); // Set currentUser to false when quitting
+        setCurrentUser(null)
+        handleLogout()
     };
-
     return (
         <header className={cx('wrapper')}>
             <div className={cx('left-items')}>
@@ -58,7 +58,7 @@ function Header({ onSizeChange }) {
 
             {currentUser ? (
                 <div className={cx('right-items')}>
-                    <Link to={config.routes.history}>
+                    <Link to={`${config.routes.history}`}>
                         <img src={user} alt="user" className={cx('items-login')} />
                     </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
