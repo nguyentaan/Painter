@@ -8,9 +8,9 @@ import { useUser } from '../../hook/UserContext';
 
 const cx = classNames.bind(styles);
 //Production
-const path = 'https://backendpainter-v1.onrender.com';
+// const path = 'https://backendpainter-v1.onrender.com';
 //Testing
-// const path =  "http://localhost:8081"
+const path =  "http://localhost:8081"
 
 function Login() {
     const [user, setUser] = useState([]);
