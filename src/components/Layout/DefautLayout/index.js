@@ -4,6 +4,8 @@ import Home from '~/pages/Home';
 import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
 import { createContext, useState } from 'react';
+import { useUser } from '../../../hook/UserContext'; // Import the useUser hook
+
 
 const cx = classNames.bind(styles);
 
@@ -23,18 +25,17 @@ function DefaultLayout() {
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
         setHeight(newHeight);
-        console.log(newWidth);
-        console.log(newHeight);
     };
 
-    console.log('is clear: ', isClear);
-    console.log('is  undo: ', isUndo);
-    console.log('is redo: ', isRedo);
+    const { userInfo, logout} = useUser(); // Use the useUser hook to get user, logout, and userInfo
 
+    const handleLogout = () => {
+        logout();
+    };
     return (
         <SizeContext.Provider value={{ width, height, setWidth, setHeight, setSize }}>
             <div className={cx('wrapper')}>
-                <Header setIsUndo={setIsUndo} setIsRedo={setIsRedo} />
+                <Header setIsUndo={setIsUndo} setIsRedo={setIsRedo}  userInfo={userInfo} handleLogout={handleLogout}  />
                 <SubHeader
                     selectedTool={selectedTool}
                     setSelectedTool={setSelectedTool}
@@ -45,6 +46,7 @@ function DefaultLayout() {
                 />
                 <div className={cx('container')}>
                     <Home
+                        userInfo={userInfo}
                         selectedTool={selectedTool}
                         brushWidth={brushWidth}
                         selectedColor={selectedColor}
@@ -58,11 +60,6 @@ function DefaultLayout() {
                         setIsUndo={setIsUndo}
                     />
                 </div>
-                {/* <div className={cx('container')}>
-                    <Footer
-                    />
-                </div> */}
-                
             </div>
         </SizeContext.Provider>
     );
