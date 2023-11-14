@@ -5,6 +5,7 @@ import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
 import { createContext, useState } from 'react';
 import { useUser } from '../../../hook/UserContext'; // Import the useUser hook
+// import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
@@ -30,10 +31,44 @@ function DefaultLayout() {
     const handleLogout = () => {
         logout();
     };
+
+    const handleDownloadImage = () => {
+        const canvas = document.getElementById('myCanvas');
+        if (canvas) {
+            const timestamp = new Date().getTime();
+            const randomString = Math.random().toString(36).substring(7);
+
+            // Combine timestamp and random string for a unique name
+            const fileName = `drawing_${timestamp}_${randomString}.jpg`;
+
+            // Get the Data URL of the canvas content as a JPEG image
+            const imageDataURL = canvas.toDataURL('image/jpeg');
+
+            //Create a temporary link element
+            const link = document.createElement('a');
+            link.href = imageDataURL;
+            link.download = fileName;
+            link.click();
+        }
+    };
+
+    // const saveCanvasImage = async (userInfo, ImageData) => {
+    //     try {
+    //         const response = await axios.post('', {
+    //             userId: userInfo.id,
+    //             ImageData,
+    //         });
+
+    //         console.log(response.data);
+    //     } catch (error) {
+    //         console.error('Error saving canvas image:', error);
+    //     }
+    // };
+
     return (
         <SizeContext.Provider value={{ width, height, setWidth, setHeight, setSize }}>
             <div className={cx('wrapper')}>
-                <Header userInfo={userInfo} handleLogout={handleLogout} />
+                <Header userInfo={userInfo} handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />
                 <SubHeader
                     selectedTool={selectedTool}
                     setSelectedTool={setSelectedTool}
