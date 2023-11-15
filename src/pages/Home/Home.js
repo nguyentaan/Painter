@@ -226,17 +226,14 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
 
     const getFillColor = () => {
         const colorString = selectedColor.toLowerCase();
-
         // Check for color names or hexadecimal format
         const namedColor = nameToRGB(colorString);
         if (namedColor) {
             return namedColor;
         }
-
         // Check for RGB format
         const rgbRegex = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/;
         const rgbMatch = colorString.match(rgbRegex);
-
         if (rgbMatch) {
             const red = parseInt(rgbMatch[1], 10);
             const green = parseInt(rgbMatch[2], 10);
@@ -256,11 +253,9 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
                 return [red, green, blue, 255];
             }
         }
-
         // Check for hexadecimal format
         const hexRegex = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/;
         const hexMatch = colorString.match(hexRegex);
-
         if (hexMatch) {
             const red = parseInt(hexMatch[1], 16);
             const green = parseInt(hexMatch[2], 16);
@@ -270,11 +265,9 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
                 return [red, green, blue, 255];
             }
         }
-
         // If the colorString doesn't match any expected format, return a default color (black) with a default alpha value of 255 (fully opaque)
         return [0, 0, 0, 255];
     };
-
     // Helper function to convert color names to RGB
     const nameToRGB = (colorName) => {
         const namedColors = {
@@ -289,29 +282,22 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
 
         return null;
     };
-
-    // --------------------------------------------------------
-
+    // -------------------------------------------------------
     const updateSnapshot = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
-
         if (context) setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
     };
 
     const clearCanvas = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
-
         if (!context) return;
-
         //Clear Canvas
         context.clearRect(0, 0, canvas.width, canvas.height);
         setCanvasBackground(context);
     };
 
-    // console.log('selected color: ', selectedColor);
-    // console.log('selected tool: ', selectedTool);
 
     return (
         <section className={cx('drawing-board')}>
