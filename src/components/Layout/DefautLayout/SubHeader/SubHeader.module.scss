@@ -1,7 +1,7 @@
 .container {
     height: 150px;
     background-color: var(--bg-color);
-    border: 2px solid var(--main-color);
+    border-bottom: 2px solid var(--main-color);
     width: 100%;
     display: flex;
     justify-content: space-around;
@@ -160,13 +160,14 @@
 }
 
 .button-clear {
+    display: flex;
     color: var(--font-color);
     border: 2px solid var(--main-color);
     background-color: lightblue;
     font-weight: 600;
     font-size: 30px;
     cursor: pointer;
-    padding: 5px;
+    padding: 5px 10px;
     border-radius: 12px;
     transition: all 0.3s ease;
     box-shadow: 4px 4px var(--main-color);
@@ -174,4 +175,8 @@
         box-shadow: 0px 0px var(--main-color);
         transform: translate(3px, 3px);
     }
+}
+
+.button-clear img{
+    width: 30px;
 }

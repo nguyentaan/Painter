@@ -1,6 +1,6 @@
 import Header from '../../components/Layout/DefautLayout/Header';
-import SubHeader from '../../components/Layout/DefautLayout/SubHeader';
-import Home from '~/pages/Home';
+// import SubHeader from '../../components/Layout/DefautLayout/SubHeader';
+// import Home from '~/pages/Home';
 import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext, useState } from 'react';
@@ -12,9 +12,9 @@ const cx = classNames.bind(styles);
 export const SizeContext = createContext();
 
 function History() {
-    const [isClear, setIsClear] = useState(false);
-    const [isUndo, setIsUndo] = useState(false);
-    const [isRedo, setIsRedo] = useState(false);
+    // const [isClear, setIsClear] = useState(false);
+    // const [isUndo, setIsUndo] = useState(false);
+    // const [isRedo, setIsRedo] = useState(false);
 
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
@@ -38,7 +38,7 @@ function History() {
                 setSize,
             }}
         >
-             <Header setIsUndo={setIsUndo} setIsRedo={setIsRedo} userInfo={userInfo} handleLogout={handleLogout} />
+             <Header userInfo={userInfo} handleLogout={handleLogout} />
             <div className={cx('wrapper')}>
 
             </div>

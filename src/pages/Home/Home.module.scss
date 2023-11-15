@@ -1,12 +1,13 @@
 .drawing-board {
-    background-color: #f5efe7;
+    background-color: #FAF3F0;
     padding: 50px;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    // margin: 50px;
+    background-image: url('/assets/background/cover-background.png');
+    background-size: cover;
 }
 
 .actions {
@@ -20,7 +21,7 @@
     cursor: pointer;
     border-radius: 12px;
     margin: 8px;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.03s ease-in-out;
 
     &:hover {
         background: rgba(170, 170, 170, 0.62);

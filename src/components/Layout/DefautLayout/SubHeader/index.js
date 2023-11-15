@@ -8,6 +8,7 @@ import Brush from '~/assets/icons/Brush-1.svg';
 import Eraser from '~/assets/icons/Eraser-Tool.svg';
 import Fill from '~/assets/icons/Paint-Bucket.svg';
 import Select from '~/assets/icons/Direction-Select.svg';
+import trash from '~/assets/icons/trash-solid.svg';
 import { useState } from 'react';
 
 const cx = classNames.bind(styles);
@@ -20,6 +21,7 @@ function SubHeader({
     selectedColor,
     setSelectedColor,
     setIsClear,
+    // setIsDragging
 }) {
     const colorOptions = [
         '#A9A9A9',
@@ -52,6 +54,10 @@ function SubHeader({
     const handleClearCanvas = () => {
         setIsClear(true);
     };
+
+    // const handleDragging = () => {
+    //     setIsDragging(true);
+    // }
 
     const handleColorClick = (color, index) => {
         setSelectedColor(color.toLowerCase());
@@ -212,7 +218,7 @@ function SubHeader({
             </div>
             <div className={cx('column', 'df')}>
                 <button onClick={handleClearCanvas} className={cx('button-clear')}>
-                    Clear canvas
+                    <img src={trash} alt="trash" />
                 </button>
             </div>
         </section>
