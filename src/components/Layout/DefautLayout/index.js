@@ -49,19 +49,6 @@ function DefaultLayout() {
         }
     };
 
-    // const saveCanvasImage = async (userInfo, ImageData) => {
-    //     try {
-    //         const response = await axios.post('', {
-    //             userId: userInfo.id,
-    //             ImageData,
-    //         });
-
-    //         console.log(response.data);
-    //     } catch (error) {
-    //         console.error('Error saving canvas image:', error);
-    //     }
-    // };
-
     return (
         <SizeContext.Provider value={{ width, height, setWidth, setHeight, setSize }}>
             <div className={cx('wrapper')}>

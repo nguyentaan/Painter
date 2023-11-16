@@ -70,6 +70,7 @@ function Header({ userInfo, handleLogout, handleDownloadImage }) {
             console.log('Error details:', error.response.data);
         }
     };
+<<<<<<< HEAD
     return (
         <header className={cx('wrapper')}>
             {' '}
@@ -127,3 +128,150 @@ function Header({ userInfo, handleLogout, handleDownloadImage }) {
 }
 
 export default Header;
+=======
+    return (<
+        header className={
+            cx('wrapper')
+        } > {
+            currentUser ? (<
+                div className={
+                    cx('left-items')
+                } >
+                <
+                span className={
+                        cx('items')
+                    }
+                    onClick={
+                        handleNewButtonClick
+                    } >
+                    New <
+                /span> {
+                        isDialogOpen && (<
+                        div className={
+                                cx('overlay')
+                            }
+                            onClick={
+                                handleOverlayClick
+                            } >
+                            <
+                                Dialog />
+                            <
+                        /div>
+                            )
+                } <
+                span className={
+                                    cx('items')
+                                }
+                                onClick={
+                                    handleSaveAndDownload
+                                } >
+                                Save <
+                /span> <
+                span className={
+                                        cx('items')
+                                    }
+                                    onClick={
+                                        handleDownloadImage
+                                    } >
+                                    Download <
+                /span> <
+                /div>
+                                    ) : ( <
+                div className={
+                                            cx('left-items')
+                                        } >
+                                        <
+                span className={
+                                                cx('items')
+                                            }
+                                            onClick={
+                                                handleNewButtonClick
+                                            } >
+                                            New <
+                /span> {
+                                                isDialogOpen && (<
+                        div className={
+                                                        cx('overlay')
+                                                    }
+                                                    onClick={
+                                                        handleOverlayClick
+                                                    } >
+                                                    <
+                                                        Dialog />
+                                                    <
+                        /div>
+                                                    )
+                } <
+                span className={
+                                                            cx('items')
+                                                        }
+                                                        onClick={
+                                                            handleDownloadImage
+                                                        } >
+                                                        Download <
+                /span> <
+                /div>
+                                                        )
+        }
+
+                                                        {
+                                                            currentUser ? (<
+                div className={
+                                                                    cx('right-items')
+                                                                } >
+                                                                <
+                Link to={
+                                                                        `${config.routes.history}`
+                                                                    } >
+                                                                    <
+                                                                        img src={
+                                                                            user
+                                                                        }
+                                                                        alt="user"
+                                                                        className={
+                                                                            cx('items-login')
+                                                                        }
+                                                                    /> <
+                /Link> <
+                                                                        img src={
+                                                                            exit
+                                                                        }
+                                                                        alt="exit"
+                                                                        className={
+                                                                            cx('items-login')
+                                                                        }
+                                                                        onClick={
+                                                                            handleQuit
+                                                                        }
+                                                                    /> <
+                /div>
+                                                                    ) : ( <
+                div className={
+                                                                            cx('right-items')
+                                                                        } >
+                                                                        <
+                Link to={
+                                                                                config.routes.login
+                                                                            } >
+                                                                            <
+                span className={
+                                                                                    cx('items')
+                                                                                } > Login < /span> <
+                /Link> <
+                Link to={
+                                                                                        config.routes.register
+                                                                                    } >
+                                                                                    <
+                span className={
+                                                                                            cx('items')
+                                                                                        } > Register < /span> <
+                /Link> <
+                /div>
+                                                                                        )
+        } <
+        /header>
+                                                                                        );
+}
+
+                                                                                        export default Header;
+>>>>>>> origin/main
