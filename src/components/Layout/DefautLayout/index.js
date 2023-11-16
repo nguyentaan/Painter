@@ -37,13 +37,10 @@ function DefaultLayout() {
         if (canvas) {
             const timestamp = new Date().getTime();
             const randomString = Math.random().toString(36).substring(7);
-
             // Combine timestamp and random string for a unique name
             const fileName = `drawing_${timestamp}_${randomString}.jpg`;
-
             // Get the Data URL of the canvas content as a JPEG image
             const imageDataURL = canvas.toDataURL('image/jpeg');
-
             //Create a temporary link element
             const link = document.createElement('a');
             link.href = imageDataURL;

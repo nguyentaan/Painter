@@ -39,94 +39,89 @@ function Header({ userInfo, handleLogout, handleDownloadImage }) {
         if (canvas) {
             const timestamp = new Date().getTime();
             const randomString = Math.random().toString(36).substring(7);
-
-            // Combine timestamp and random string for a unique name
-            const fileName = `drawing_${timestamp}_${randomString}.jpg`;
-
             // Get the Data URL of the canvas content as a JPEG image
             const imageDataURL = canvas.toDataURL('image/jpeg');
-
+            console.log(imageDataURL);
+            //Trong currentUser da co user_id
             if (currentUser) {
                 // Save canvas image to the database
-                saveCanvasImage(userInfo, imageDataURL);
+                saveCanvasImage(currentUser, imageDataURL);
+                // Construct a custom filename based on user and image IDs
+                const fileName = `paintingimage__createby_${currentUser.user_id}_${timestamp}_${randomString}.jpg`;
+                // Create a temporary link element for downloading
+                const link = document.createElement('a');
+                link.href = imageDataURL;
+                link.download = fileName;
+                link.click();
             }
-
-            // Create a temporary link element for downloading
-            const link = document.createElement('a');
-            link.href = imageDataURL;
-            link.download = fileName;
-            link.click();
         }
     };
 
-    const saveCanvasImage = async (userInfo, imageData) => {
+    const saveCanvasImage = async (userInfo, image_data) => {
         try {
             const response = await axios.post('http://localhost:8081/saveimages', {
-                user_id: userInfo.id,
-                image: imageData,
+                user_id: userInfo.user_id,
+                image_data: image_data,
             });
-
             console.log(response.data);
-            // You can add logic here to handle the response, such as displaying a success message
         } catch (error) {
+            console.log(error);
             console.error('Error saving canvas image:', error);
-
-            // You can add logic here to handle errors, such as displaying an error message
+            console.log('Error details:', error.response.data);
         }
     };
-
     return (
         <header className={cx('wrapper')}>
+            {' '}
             {currentUser ? (
                 <div className={cx('left-items')}>
                     <span className={cx('items')} onClick={handleNewButtonClick}>
-                        New
-                    </span>
+                        New{' '}
+                    </span>{' '}
                     {isDialogOpen && (
                         <div className={cx('overlay')} onClick={handleOverlayClick}>
                             <Dialog />
                         </div>
-                    )}
+                    )}{' '}
                     <span className={cx('items')} onClick={handleSaveAndDownload}>
-                        Save
-                    </span>
+                        Save{' '}
+                    </span>{' '}
                     <span className={cx('items')} onClick={handleDownloadImage}>
-                        Download
-                    </span>
+                        Download{' '}
+                    </span>{' '}
                 </div>
             ) : (
                 <div className={cx('left-items')}>
                     <span className={cx('items')} onClick={handleNewButtonClick}>
-                        New
-                    </span>
+                        New{' '}
+                    </span>{' '}
                     {isDialogOpen && (
                         <div className={cx('overlay')} onClick={handleOverlayClick}>
                             <Dialog />
                         </div>
-                    )}
+                    )}{' '}
                     <span className={cx('items')} onClick={handleDownloadImage}>
-                        Download
-                    </span>
+                        Download{' '}
+                    </span>{' '}
                 </div>
             )}
-
             {currentUser ? (
                 <div className={cx('right-items')}>
                     <Link to={`${config.routes.history}`}>
-                        <img src={user} alt="user" className={cx('items-login')} />
-                    </Link>
-                    <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
+                        <img src={user} alt="user" className={cx('items-login')} />{' '}
+                    </Link>{' '}
+                    <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />{' '}
                 </div>
             ) : (
                 <div className={cx('right-items')}>
                     <Link to={config.routes.login}>
-                        <span className={cx('items')}>Login</span>
-                    </Link>
+                        <span className={cx('items')}> Login </span>{' '}
+                    </Link>{' '}
                     <Link to={config.routes.register}>
-                        <span className={cx('items')}>Register</span>
-                    </Link>
+                        <span className={cx('items')}> Register </span>{' '}
+                    </Link>{' '}
                 </div>
-            )}
+            )}{' '}
         </header>
     );
 }
