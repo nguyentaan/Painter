@@ -78,148 +78,148 @@ function Header({
             console.log('Error details:', error.response.data);
         }
     };
-    return ( <
-        header className = {
+    return (<
+        header className={
             cx('wrapper')
         } > {
-            currentUser ? ( <
-                div className = {
+            currentUser ? (<
+                div className={
                     cx('left-items')
                 } >
                 <
-                span className = {
-                    cx('items')
-                }
-                onClick = {
-                    handleNewButtonClick
-                } >
-                New <
+                span className={
+                        cx('items')
+                    }
+                    onClick={
+                        handleNewButtonClick
+                    } >
+                    New <
                 /span> {
-                    isDialogOpen && ( <
-                        div className = {
-                            cx('overlay')
-                        }
-                        onClick = {
-                            handleOverlayClick
-                        } >
-                        <
-                        Dialog / >
-                        <
+                        isDialogOpen && (<
+                        div className={
+                                cx('overlay')
+                            }
+                            onClick={
+                                handleOverlayClick
+                            } >
+                            <
+                                Dialog />
+                            <
                         /div>
-                    )
+                            )
                 } <
-                span className = {
-                    cx('items')
-                }
-                onClick = {
-                    handleSaveAndDownload
-                } >
-                Save <
+                span className={
+                                    cx('items')
+                                }
+                                onClick={
+                                    handleSaveAndDownload
+                                } >
+                                Save <
                 /span> <
-                span className = {
-                    cx('items')
-                }
-                onClick = {
-                    handleDownloadImage
-                } >
-                Download <
+                span className={
+                                        cx('items')
+                                    }
+                                    onClick={
+                                        handleDownloadImage
+                                    } >
+                                    Download <
                 /span> <
                 /div>
-            ) : ( <
-                div className = {
-                    cx('left-items')
-                } >
-                <
-                span className = {
-                    cx('items')
-                }
-                onClick = {
-                    handleNewButtonClick
-                } >
-                New <
+                                    ) : ( <
+                div className={
+                                            cx('left-items')
+                                        } >
+                                        <
+                span className={
+                                                cx('items')
+                                            }
+                                            onClick={
+                                                handleNewButtonClick
+                                            } >
+                                            New <
                 /span> {
-                    isDialogOpen && ( <
-                        div className = {
-                            cx('overlay')
-                        }
-                        onClick = {
-                            handleOverlayClick
-                        } >
-                        <
-                        Dialog / >
-                        <
+                                                isDialogOpen && (<
+                        div className={
+                                                        cx('overlay')
+                                                    }
+                                                    onClick={
+                                                        handleOverlayClick
+                                                    } >
+                                                    <
+                                                        Dialog />
+                                                    <
                         /div>
-                    )
+                                                    )
                 } <
-                span className = {
-                    cx('items')
-                }
-                onClick = {
-                    handleDownloadImage
-                } >
-                Download <
+                span className={
+                                                            cx('items')
+                                                        }
+                                                        onClick={
+                                                            handleDownloadImage
+                                                        } >
+                                                        Download <
                 /span> <
                 /div>
-            )
+                                                        )
         }
 
-        {
-            currentUser ? ( <
-                div className = {
-                    cx('right-items')
-                } >
-                <
-                Link to = {
-                    `${config.routes.history}`
-                } >
-                <
-                img src = {
-                    user
-                }
-                alt = "user"
-                className = {
-                    cx('items-login')
-                }
-                /> <
+                                                        {
+                                                            currentUser ? (<
+                div className={
+                                                                    cx('right-items')
+                                                                } >
+                                                                <
+                Link to={
+                                                                        `${config.routes.history}`
+                                                                    } >
+                                                                    <
+                                                                        img src={
+                                                                            user
+                                                                        }
+                                                                        alt="user"
+                                                                        className={
+                                                                            cx('items-login')
+                                                                        }
+                                                                    /> <
                 /Link> <
-                img src = {
-                    exit
-                }
-                alt = "exit"
-                className = {
-                    cx('items-login')
-                }
-                onClick = {
-                    handleQuit
-                }
-                /> <
+                                                                        img src={
+                                                                            exit
+                                                                        }
+                                                                        alt="exit"
+                                                                        className={
+                                                                            cx('items-login')
+                                                                        }
+                                                                        onClick={
+                                                                            handleQuit
+                                                                        }
+                                                                    /> <
                 /div>
-            ) : ( <
-                div className = {
-                    cx('right-items')
-                } >
-                <
-                Link to = {
-                    config.routes.login
-                } >
-                <
-                span className = {
-                    cx('items')
-                } > Login < /span> <
+                                                                    ) : ( <
+                div className={
+                                                                            cx('right-items')
+                                                                        } >
+                                                                        <
+                Link to={
+                                                                                config.routes.login
+                                                                            } >
+                                                                            <
+                span className={
+                                                                                    cx('items')
+                                                                                } > Login < /span> <
                 /Link> <
-                Link to = {
-                    config.routes.register
-                } >
-                <
-                span className = {
-                    cx('items')
-                } > Register < /span> <
+                Link to={
+                                                                                        config.routes.register
+                                                                                    } >
+                                                                                    <
+                span className={
+                                                                                            cx('items')
+                                                                                        } > Register < /span> <
                 /Link> <
                 /div>
-            )
+                                                                                        )
         } <
         /header>
-    );
+                                                                                        );
 }
 
-export default Header;
+                                                                                        export default Header;
