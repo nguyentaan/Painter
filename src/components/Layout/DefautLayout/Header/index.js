@@ -62,17 +62,14 @@ function Header({ userInfo, handleLogout, handleDownloadImage }) {
     const saveCanvasImage = async (userInfo, imageData) => {
         try {
             const response = await axios.post('http://localhost:8081/saveimages', {
-                userId: userInfo.id,
-                ImageData: imageData,
+                user_id: userInfo.id,
+                image: imageData,
             });
 
             console.log(response.data);
             // You can add logic here to handle the response, such as displaying a success message
         } catch (error) {
             console.error('Error saving canvas image:', error);
-
-            // Log more details about the error
-            console.log('Error details:', error.response.data);
 
             // You can add logic here to handle errors, such as displaying an error message
         }
