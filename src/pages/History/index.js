@@ -14,7 +14,7 @@ function History() {
     const [loading, setLoading] = useState(true);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
-    const pathBackEnd = 'https://backendpainter-v1.onrender.com/'
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com'
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
