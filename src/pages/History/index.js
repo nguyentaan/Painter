@@ -14,6 +14,7 @@ function History() {
     const [loading, setLoading] = useState(true);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com/'
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -43,7 +44,7 @@ function History() {
 
     const fetchImages = async () => {
         try {
-            const response = await fetch('http://localhost:8081/getAllImages');
+            const response = await fetch(`${pathBackEnd}/getAllImages`);
             const responseData = await response.json();
 
             console.log('API response:', responseData);
