@@ -4,12 +4,14 @@ import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
 import { useUser } from '../../hook/UserContext';
+import Loader from '~/components/items/Loader';
 
 const cx = classNames.bind(styles);
 
 export const SizeContext = createContext();
 
 function History() {
+    const [loading, setLoading] = useState(true);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
 
@@ -50,8 +52,10 @@ function History() {
 
             const userImages = data.filter((image) => image.user_id === userInfo.user_id);
             setImages(userImages);
+            setLoading(false);
         } catch (error) {
             console.error('Error fetching images:', error);
+            setLoading(false);
         }
     };
 
@@ -91,35 +95,29 @@ function History() {
             <Header userInfo={userInfo} handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />{' '}
             <div className={cx('wrapper')}>
                 <div className={cx('container-history')}>
-                    <h3> This is a history details of User: {userInfo.user_email} </h3>{' '}
-                    <div className={cx('list-images')}>
-                        {images.map((image) => (
-                            <div
-                                key={image.imageID}
-                                className={cx('image-item')}
-                                // style={{
-                                //     backgroundImage: `url(${image.image_data})`,
-                                // }}
-                            >
-                                <img src={image.image_data} alt="anh" className={cx('card-image')} />
-                                <p className={cx('image-item-date')}>Created at: {formatImageDate(image.dateImage)}</p>
-                                <div className={cx('buttons-action')}>
-                                    <button>Edit</button>
-                                    <button>Delete</button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    {/* <div className={cx('list-images')}>
-                        <div className={cx('image-item')}>
-                            <img className={cx('card-image')} src={test} alt="test" />
-                            <div className="image-item-date">11/16/2023</div>
-                            <div className={cx('buttons-action')}>
-                                <button>Edit</button>
-                                <button>Delete</button>
-                            </div>
+                    {loading ? (
+                        <div className={cx('overlay')}>
+                            <Loader />
                         </div>
-                    </div> */}
+                    ) : (
+                        <>
+                            <h3> This is a history details of User: {userInfo.user_email} </h3>{' '}
+                            <div className={cx('list-images')}>
+                                {images.map((image) => (
+                                    <div key={image.imageID} className={cx('image-item')}>
+                                        <img src={image.image_data} alt="anh" className={cx('card-image')} />
+                                        <p className={cx('image-item-date')}>
+                                            Created at: {formatImageDate(image.dateImage)}
+                                        </p>
+                                        <div className={cx('buttons-action')}>
+                                            <button>Edit</button>
+                                            <button>Delete</button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </SizeContext.Provider>
