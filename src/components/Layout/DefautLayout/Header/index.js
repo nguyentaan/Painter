@@ -10,8 +10,9 @@ import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
 
 const cx = classNames.bind(styles);
-
 function Header({ userInfo, handleLogout, handleDownloadImage }) {
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com/'
+
     const [currentUser, setCurrentUser] = useState(userInfo);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -59,7 +60,7 @@ function Header({ userInfo, handleLogout, handleDownloadImage }) {
 
     const saveCanvasImage = async (userInfo, image_data) => {
         try {
-            const response = await axios.post('http://localhost:8081/saveimages', {
+            const response = await axios.post(`${pathBackEnd}/saveimages`, {
                 user_id: userInfo.user_id,
                 image_data: image_data,
             });
