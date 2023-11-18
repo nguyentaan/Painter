@@ -28,6 +28,7 @@ function DefaultLayout() {
 
     const { userInfo, logout } = useUser(); // Use the useUser hook to get user, logout, and userInfo
 
+    console.log(userInfo); //
     const handleLogout = () => {
         logout();
     };
