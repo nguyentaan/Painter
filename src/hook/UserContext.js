@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
 
   const login = (userInfo) => {
-    if (userInfo && userInfo.user_id && userInfo.user_email && userInfo.role) {
+    if (userInfo && userInfo.email) {
       setUserInfo(userInfo);
       // Store user information in localStorage
       localStorage.setItem('userInfo', JSON.stringify(userInfo));
