@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/Layout/DefautLayout/Header';
 import styles from './History.module.scss';
@@ -5,6 +6,7 @@ import classNames from 'classnames/bind';
 import { createContext } from 'react';
 import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -22,14 +24,10 @@ function History() {
     };
 
     const [images, setImages] = useState([]);
-    const { userInfo, logout, setImgId } = useUser();
+    const { userInfo, logout } = useUser();
 
     const handleLogout = () => {
         logout();
-    };
-
-    const handleImgId = (imgID) => {
-        setImgId(imgID);
     };
 
     const handleDownloadImage = () => {
@@ -115,7 +113,9 @@ function History() {
                                             Created at: {formatImageDate(image.dateImage)}
                                         </p>
                                         <div className={cx('buttons-action')}>
-                                            <button onClick={handleImgId(image.imageID)}>Edit</button>
+                                            <Link to={`/edit/${image.imageID}`}>
+                                                <button>Edit</button>
+                                            </Link>
                                             <button>Delete</button>
                                         </div>
                                     </div>

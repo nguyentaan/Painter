@@ -5,7 +5,6 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [userInfo, setUserInfo] = useState(null);
-    const [imgId, setImgId] = useState(null);
 
     const login = (userInfo) => {
         if (userInfo && userInfo.user_id && userInfo.user_email && userInfo.user_role) {
@@ -19,7 +18,7 @@ export const UserProvider = ({ children }) => {
         setUserInfo(null);
     };
 
-    return <UserContext.Provider value={{ userInfo, login, logout, imgId, setImgId }}>{children}</UserContext.Provider>;
+    return <UserContext.Provider value={{ userInfo, login, logout }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => {

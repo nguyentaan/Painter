@@ -1,6 +1,7 @@
 import Header from '~/components/Layout/DefautLayout/Header';
 import SubHeader from '~/components/Layout/DefautLayout/SubHeader';
 import Home from '~/pages/Home';
+import Edit from '~/pages/Edit';
 import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
 import { createContext, useState } from 'react';
@@ -26,7 +27,7 @@ function DefaultLayout() {
         setHeight(newHeight);
     };
 
-    const { userInfo, logout } = useUser(); // Use the useUser hook to get user, logout, and userInfo
+    const { userInfo, logout, isEdit } = useUser(); // Use the useUser hook to get user, logout, and userInfo
 
     const handleLogout = () => {
         logout();
@@ -63,16 +64,29 @@ function DefaultLayout() {
                     // setIsDragging={setIsDragging}
                 />
                 <div className={cx('container')}>
-                    <Home
-                        userInfo={userInfo}
-                        selectedTool={selectedTool}
-                        brushWidth={brushWidth}
-                        selectedColor={selectedColor}
-                        width={width}
-                        height={height}
-                        isClear={isClear}
-                        setIsClear={setIsClear}
-                    />
+                    {isEdit ? (
+                        <Edit
+                            userInfo={userInfo}
+                            selectedTool={selectedTool}
+                            brushWidth={brushWidth}
+                            selectedColor={selectedColor}
+                            width={width}
+                            height={height}
+                            isClear={isClear}
+                            setIsClear={setIsClear}
+                        />
+                    ) : (
+                        <Home
+                            userInfo={userInfo}
+                            selectedTool={selectedTool}
+                            brushWidth={brushWidth}
+                            selectedColor={selectedColor}
+                            width={width}
+                            height={height}
+                            isClear={isClear}
+                            setIsClear={setIsClear}
+                        />
+                    )}
                 </div>
             </div>
         </SizeContext.Provider>
