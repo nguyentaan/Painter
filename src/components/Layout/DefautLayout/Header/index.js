@@ -1,6 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import {
+    Link
+} from 'react-router-dom';
+import {
+    useState
+} from 'react';
 import axios from 'axios';
 import styles from './Header.module.scss';
 import classNames from 'classnames/bind';
@@ -8,11 +12,25 @@ import config from '~/config';
 import Dialog from '~/components/items/Dialog';
 import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
+import {
+    useNavigate
+} from 'react-router-dom';
+import {
+    useUser
+} from '../../../../hook/UserContext';
 
 const cx = classNames.bind(styles);
-function Header({ userInfo, handleLogout, handleDownloadImage }) {
-    const pathBackEnd = 'https://backendpainter-v1.onrender.com/'
 
+function Header({
+    userInfo,
+    handleLogout,
+    handleDownloadImage
+}) {
+    const {
+        pathBackEnd,
+        login
+    } = useUser();
+    const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState(userInfo);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -31,8 +49,14 @@ function Header({ userInfo, handleLogout, handleDownloadImage }) {
     };
 
     const handleQuit = () => {
-        setCurrentUser(null);
         handleLogout();
+        setCurrentUser(null)
+        // Clear the token from the cookie
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        // Reset the user information in the context
+        login(null);
+        // Redirect to the login page or home page
+        navigate('/login');
     };
 
     const handleSaveAndDownload = () => {
@@ -71,59 +95,165 @@ function Header({ userInfo, handleLogout, handleDownloadImage }) {
             console.log('Error details:', error.response.data);
         }
     };
-    return (
-        <header className={cx('wrapper')}>
-            {' '}
-            {currentUser ? (
-                <div className={cx('left-items')}>
-                    <span className={cx('items')} onClick={handleNewButtonClick}>
-                        New{' '}
-                    </span>{' '}
-                    {isDialogOpen && (
-                        <div className={cx('overlay')} onClick={handleOverlayClick}>
-                            <Dialog onClose={handleCloseDialog}/>
-                        </div>
-                    )}{' '}
-                    <span className={cx('items')} onClick={handleSaveAndDownload}>
-                        Save{' '}
-                    </span>{' '}
-                    <span className={cx('items')} onClick={handleDownloadImage}>
-                        Download{' '}
-                    </span>{' '}
-                </div>
-            ) : (
-                <div className={cx('left-items')}>
-                    <span className={cx('items')} onClick={handleNewButtonClick}>
-                        New{' '}
-                    </span>{' '}
-                    {isDialogOpen && (
-                        <div className={cx('overlay')} onClick={handleOverlayClick}>
-                            <Dialog />
-                        </div>
-                    )}{' '}
-                    <span className={cx('items')} onClick={handleDownloadImage}>
-                        Download{' '}
-                    </span>{' '}
-                </div>
-            )}
-            {currentUser ? (
-                <div className={cx('right-items')}>
-                    <Link to={`${config.routes.history}`}>
-                        <img src={user} alt="user" className={cx('items-login')} />{' '}
-                    </Link>{' '}
-                    <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />{' '}
-                </div>
-            ) : (
-                <div className={cx('right-items')}>
-                    <Link to={config.routes.login}>
-                        <span className={cx('items')}> Login </span>{' '}
-                    </Link>{' '}
-                    <Link to={config.routes.register}>
-                        <span className={cx('items')}> Register </span>{' '}
-                    </Link>{' '}
-                </div>
-            )}{' '}
-        </header>
+    return ( <
+        header className = {
+            cx('wrapper')
+        } > {
+            ' '
+        } {
+            currentUser ? ( <
+                div className = {
+                    cx('left-items')
+                } >
+                <
+                span className = {
+                    cx('items')
+                }
+                onClick = {
+                    handleNewButtonClick
+                } >
+                New {
+                    ' '
+                } <
+                /span>{' '} {
+                    isDialogOpen && ( <
+                        div className = {
+                            cx('overlay')
+                        }
+                        onClick = {
+                            handleOverlayClick
+                        } >
+                        <
+                        Dialog onClose = {
+                            handleCloseDialog
+                        }
+                        /> <
+                        /div>
+                    )
+                } {
+                    ' '
+                } <
+                span className = {
+                    cx('items')
+                }
+                onClick = {
+                    handleSaveAndDownload
+                } >
+                Save {
+                    ' '
+                } <
+                /span>{' '} <
+                span className = {
+                    cx('items')
+                }
+                onClick = {
+                    handleDownloadImage
+                } >
+                Download {
+                    ' '
+                } <
+                /span>{' '} <
+                /div>
+            ) : ( <
+                div className = {
+                    cx('left-items')
+                } >
+                <
+                span className = {
+                    cx('items')
+                }
+                onClick = {
+                    handleNewButtonClick
+                } >
+                New {
+                    ' '
+                } <
+                /span>{' '} {
+                    isDialogOpen && ( <
+                        div className = {
+                            cx('overlay')
+                        }
+                        onClick = {
+                            handleOverlayClick
+                        } >
+                        <
+                        Dialog / >
+                        <
+                        /div>
+                    )
+                } {
+                    ' '
+                } <
+                span className = {
+                    cx('items')
+                }
+                onClick = {
+                    handleDownloadImage
+                } >
+                Download {
+                    ' '
+                } <
+                /span>{' '} <
+                /div>
+            )
+        } {
+            currentUser ? ( <
+                div className = {
+                    cx('right-items')
+                } >
+                <
+                Link to = {
+                    `${config.routes.history}`
+                } >
+                <
+                img src = {
+                    user
+                }
+                alt = "user"
+                className = {
+                    cx('items-login')
+                }
+                />{' '} <
+                /Link>{' '} <
+                img src = {
+                    exit
+                }
+                alt = "exit"
+                className = {
+                    cx('items-login')
+                }
+                onClick = {
+                    handleQuit
+                }
+                />{' '} <
+                /div>
+            ) : ( <
+                div className = {
+                    cx('right-items')
+                } >
+                <
+                Link to = {
+                    config.routes.login
+                } >
+                <
+                span className = {
+                    cx('items')
+                } > Login < /span>{' '} <
+                /Link>{' '} <
+                Link to = {
+                    config.routes.register
+                } >
+                <
+                span className = {
+                    cx('items')
+                } > Register < /span>{' '} <
+                /Link>{' '} <
+                /div>
+            )
+        } {
+            ' '
+        } <
+        /header>
     );
 }
 

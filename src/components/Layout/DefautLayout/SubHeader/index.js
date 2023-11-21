@@ -136,11 +136,11 @@ function SubHeader({
                         <span>Fill</span>
                     </li>
                     <li
-                        className={cx('option', 'tool', { active: selectedTool === 'selection' })}
-                        id="selection"
-                        onClick={() => handleToolClick('selection')}
+                        className={cx('option', 'tool', { active: selectedTool === 'select' })}
+                        id="select"
+                        onClick={() => handleToolClick('select')}
                     >
-                        <img src={Select} alt="Selection" />
+                        <img src={Select} alt="Select" />
                         <span>Select</span>
                     </li>
                 </ul>
