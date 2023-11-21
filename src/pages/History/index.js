@@ -1,10 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import HeaderHistory from '../../components/Layout/DefautLayout/headerHistory';
+import Header from '../../components/Layout/DefautLayout/Header';
 import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
 import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
+import { Link } from 'react-router-dom';
+import useSharedState from '~/hook/useShareState';
 
 const cx = classNames.bind(styles);
 
@@ -14,16 +17,34 @@ function History() {
     const [loading, setLoading] = useState(true);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com';
+
+    const [updateIsEdit] = useSharedState();
+
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
         setHeight(newHeight);
     };
 
     const [images, setImages] = useState([]);
-    const { userInfo, logout , pathBackEnd} = useUser();
+    const { userInfo, logout } = useUser();
 
     const handleLogout = () => {
         logout();
+    };
+
+    const handleDownloadImage = () => {
+        const canvas = document.getElementById('myCanvas');
+        if (canvas) {
+            const timestamp = new Date().getTime();
+            const randomString = Math.random().toString(36).substring(7);
+            const fileName = `drawing_${timestamp}_${randomString}.jpg`;
+            const imageDataURL = canvas.toDataURL('image/jpeg');
+            const link = document.createElement('a');
+            link.href = imageDataURL;
+            link.download = fileName;
+            link.click();
+        }
     };
 
     const fetchImages = async () => {
@@ -77,7 +98,7 @@ function History() {
                 setSize,
             }}
         >
-            <HeaderHistory userInfo={userInfo} handleLogout={handleLogout}/>{' '}
+            <Header userInfo={userInfo} handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />{' '}
             <div className={cx('wrapper')}>
                 <div className={cx('container-history')}>
                     {loading ? (
@@ -95,7 +116,9 @@ function History() {
                                             Created at: {formatImageDate(image.dateImage)}
                                         </p>
                                         <div className={cx('buttons-action')}>
-                                            <button>Edit</button>
+                                            <Link to={`/edit/${image.imageID}`}>
+                                                <button onClick={updateIsEdit}>Edit</button>
+                                            </Link>
                                             <button>Delete</button>
                                         </div>
                                     </div>

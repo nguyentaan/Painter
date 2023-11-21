@@ -5,6 +5,7 @@ import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
 import { createContext, useState } from 'react';
 import { useUser } from '../../../hook/UserContext'; // Import the useUser hook
+import useSharedState from '~/hook/useShareState';
 // import axios from 'axios';
 
 const cx = classNames.bind(styles);
@@ -16,6 +17,7 @@ function DefaultLayout() {
     const [brushWidth, setBrushWidth] = useState(5);
     const [selectedColor, setSelectedColor] = useState('rgb(0,0,0)');
     const [isClear, setIsClear] = useState(false);
+    const [isEdit] = useSharedState();
     // const [isDraging, setIsDragging] = useState(false);
 
     const [width, setWidth] = useState(1080);
