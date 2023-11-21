@@ -19,7 +19,7 @@ function History() {
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'https://backendpainter-v1.onrender.com';
 
-    const [updateIsEdit] = useSharedState();
+    const [isEdit,updateIsEdit] = useSharedState();
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
