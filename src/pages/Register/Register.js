@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom';
 import { isEmail } from 'validator';
 import styles from './Register.module.scss';
 import classNames from 'classnames/bind';
+import { useUser } from '../../hook/UserContext';
 
 const cx = classNames.bind(styles);
-const path = 'https://backendpainter-v1.onrender.com';
 
 function Register() {
     const [user, setUser] = useState([]);
@@ -20,6 +20,8 @@ function Register() {
 
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordMismatch, setPasswordMismatch] = useState(false);
+
+    const { pathBackEnd } = useUser();
 
     useEffect(() => {
         fetchUser();
@@ -42,7 +44,7 @@ function Register() {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get(`${path}/users`);
+            const response = await axios.get(`${pathBackEnd}/users`);
             setUser(response.data);
             console.log(response.data);
         } catch (err) {
@@ -52,7 +54,7 @@ function Register() {
 
     const handleRegisterUser = (user) => {
         return axios
-            .post(`${path}/create-user/`, user)
+            .post(`${pathBackEnd}/create-user/`, user)
             .then(() => {
                 alert('User registration successfully');
                 fetchUser();

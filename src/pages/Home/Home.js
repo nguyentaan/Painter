@@ -2,9 +2,6 @@ import styles from './Home.module.scss';
 import classNames from 'classnames/bind';
 import undoAction from '~/assets/icons/rotate-left-solid.svg';
 import redoAction from '~/assets/icons/rotate-right-solid.svg';
-// import { useUser } from '~/hook/UserContext';
-// import Konva from 'konva';
-// import { Stage, Layer, Rect, Text } from 'react-konva';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -12,40 +9,12 @@ const cx = classNames.bind(styles);
 
 function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
     const canvasRef = useRef(null);
+    // const offscreenCanvasRef = useRef(null); // Reference for the offscreen canvas
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(null);
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
-    // const [shapes, setShapes] = useState([]); // Store drawn shapes
-    // const [selectedShape, setSelectedShape] = useState(null);
-
-    // const pathBackEnd = 'https://backendpainter-v1.onrender.com';
-    // const { userInfo, imgId } = useUser();
-    // const [imageData, setImageData] = useState(null);
-
-    // useEffect(() => {
-    //     const fetchData = async () =>{
-    //         try {
-    //             const response = await fetch (`${pathBackEnd}/${userInfo.user_id}/${imgId}`,{
-    //                 method: 'PUT',
-    //                 headers:{
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify({}),
-    //             });
-    //             if (response.ok){
-    //                 const data = await response.json();
-    //                 setImageData(data.image);
-    //             } else {
-    //                 console.error('Failed to fetch image');
-    //             }
-    //         } catch (error){
-    //             console.error('Error fetching image:',error);
-    //         }
-    //     }
-    //     fetchData();
-    // },[userInfo.user_id,imgId]);
 
     const undoStack = useRef([]);
     const redoStack = useRef([]);
@@ -106,7 +75,6 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
-
         setIsDrawing(true);
         setIsClear(false);
         setPrevMouseX(e.nativeEvent.offsetX);
@@ -125,7 +93,6 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
-
         context.putImageData(snapshot, 0, 0);
 
         if (selectedTool === 'brush' || selectedTool === 'eraser') {
@@ -330,6 +297,7 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         context.clearRect(0, 0, canvas.width, canvas.height);
         setCanvasBackground(context);
     };
+
 
     return (
         <section className={cx('drawing-board')}>
