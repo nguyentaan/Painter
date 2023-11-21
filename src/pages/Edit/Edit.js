@@ -1,4 +1,4 @@
-import styles from './Home.module.scss';
+import styles from './Edit.module.scss';
 import classNames from 'classnames/bind';
 import undoAction from '~/assets/icons/rotate-left-solid.svg';
 import redoAction from '~/assets/icons/rotate-right-solid.svg';
@@ -7,11 +7,14 @@ import redoAction from '~/assets/icons/rotate-right-solid.svg';
 // import { Stage, Layer, Rect, Text } from 'react-konva';
 
 import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
-function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
+function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
     const canvasRef = useRef(null);
+    const {imageID} =useParams();
+    console.log(imageID);
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(null);
@@ -333,6 +336,8 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
 
     return (
         <section className={cx('drawing-board')}>
+            <h2>Edit Image {imageID}</h2>
+
             <div className={cx('actions')}>
                 <button
                     className={cx(styles['button'], { [styles['disabled-button']]: undoStack.current.length === 0 })}
@@ -363,4 +368,4 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
     );
 }
 
-export default Home;
+export default Edit;
