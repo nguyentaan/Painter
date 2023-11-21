@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import Header from '../../components/Layout/DefautLayout/Header';
+import HeaderHistory from '../../components/Layout/DefautLayout/HeaderHistory';
 import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
@@ -8,16 +8,18 @@ import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
 import useSharedState from '~/hook/useShareState';
+import { connect } from "react-redux";
+import { userLogout } from "../../actionCreators/LoginAction";
 
 const cx = classNames.bind(styles);
 
 export const SizeContext = createContext();
 
-function History() {
+function History(props) {
     const [loading, setLoading] = useState(true);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
-    const pathBackEnd = 'https://backendpainter-v1.onrender.com';
+    const pathBackEnd = 'http://localhost:8081';
 
     const [updateIsEdit] = useSharedState();
 
@@ -30,22 +32,11 @@ function History() {
     const { userInfo, logout } = useUser();
 
     const handleLogout = () => {
+        props.userLogout();
         logout();
     };
 
-    const handleDownloadImage = () => {
-        const canvas = document.getElementById('myCanvas');
-        if (canvas) {
-            const timestamp = new Date().getTime();
-            const randomString = Math.random().toString(36).substring(7);
-            const fileName = `drawing_${timestamp}_${randomString}.jpg`;
-            const imageDataURL = canvas.toDataURL('image/jpeg');
-            const link = document.createElement('a');
-            link.href = imageDataURL;
-            link.download = fileName;
-            link.click();
-        }
-    };
+
 
     const fetchImages = async () => {
         try {
@@ -70,6 +61,25 @@ function History() {
         const formattedDate = dateObject.toLocaleDateString();
         return formattedDate;
     };
+
+    const parseJwt = (token) => {
+        try {
+          const base64Url = token.split(".")[1];
+          const base64 = base64Url.replace("-", "+").replace("_", "/");
+          const decoded = JSON.parse(atob(base64));
+          return decoded;
+        } catch (e) {
+          console.error("Error parsing JWT:", e);
+          return null;
+        }
+      };
+      
+      // Usage
+      if (localStorage.getItem("token-user")) {
+        var userData = parseJwt(localStorage.getItem("token-user"));
+        // Now userData contains the decoded JWT payload
+      }
+    
 
     useEffect(() => {
         if (userInfo === null) {
@@ -98,7 +108,7 @@ function History() {
                 setSize,
             }}
         >
-            <Header userInfo={userInfo} handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />{' '}
+            <HeaderHistory userInfo={userInfo} handleLogout={handleLogout}/>{' '}
             <div className={cx('wrapper')}>
                 <div className={cx('container-history')}>
                     {loading ? (
@@ -107,7 +117,7 @@ function History() {
                         </div>
                     ) : (
                         <>
-                            <h3> This is a history details of User: {userInfo.user_email} </h3>{' '}
+                            <h3> This is a history details of User: {userData.email} </h3>{' '}
                             <div className={cx('list-images')}>
                                 {images.map((image) => (
                                     <div key={image.imageID} className={cx('image-item')}>
@@ -132,4 +142,14 @@ function History() {
     );
 }
 
-export default History;
+const mapStateToProps = (state) => {
+    return {
+      tokenUser: state.LoginReducer.tokenUser,
+      dataCart: state.UserReducer.dataCart,
+    };
+  };
+  
+  const mapDispatchToProps = {
+    userLogout,
+  };
+  export default connect(mapStateToProps, mapDispatchToProps)(History);

@@ -1,48 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Login.module.scss';
 import classNames from 'classnames/bind';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../hook/UserContext';
+import {
+    loginUser
+} from "../../actionCreators/LoginAction";
+import { connect } from "react-redux";
 
 const cx = classNames.bind(styles);
-//Production
-const path = 'https://backendpainter-v1.onrender.com';
-//Testing
-// const path =  "http://localhost:8081"
 
-function Login() {
-    const [user, setUser] = useState([]);
+const Login = (props) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [hasEmailError, setHasEmailError] = useState(false);
     const [hasPasswordError, setHasPasswordError] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { login } = useUser();
+    const { login } = useUser(); // Assuming `loginUser` is passed as a prop
     const navigate = useNavigate();
-
-    useEffect(() => {
-        fetchUser();
-        // Check local storage for "rememberMe" flag and email
-        const storedRememberMe = localStorage.getItem('rememberMe');
-        const storedEmail = localStorage.getItem('email');
-        if (storedRememberMe === 'true' && storedEmail) {
-            setRememberMe(true);
-            setEmail(storedEmail);
-        }
-    }, []);
-
-    const fetchUser = async () => {
-        try {
-            const response = await axios.get(`${path}/users`);
-            setUser(response.data);
-            // console.log(response)
-        } catch (err) {
-            console.error('Error fetching user: ', err);
-        }
-    };
 
     const handleMailChange = (e) => {
         setEmail(e.target.value);
@@ -71,53 +48,28 @@ function Login() {
         e.preventDefault();
         if (validateForm()) {
             setLoading(true);
+            const data = { email, password };
+    
             try {
-                const foundUser = user.find((u) => u.email === email);
-                if (foundUser) {
-                    if (foundUser.password && foundUser.password === password) {
-                        const userInfo = {
-                            user_id: foundUser.user_id,
-                            user_email: foundUser.email,
-                            user_role: foundUser.role,
-                        };
-                        // Call the login function from useUser context
-                        login(userInfo);
-                        // You might want to replace this with a more user-friendly notification
-                        alert('Login successfully');
-                        if (foundUser.role === 'admin') {
-                            navigate('/');
-                        } else if (foundUser.role === 'user') {
-                            navigate('/');
-                        } else {
-                            // navigate('/');
-                        }
-
-                        // Store email and "rememberMe" flag in local storage if "Remember me" is checked
-                        if (rememberMe) {
-                            localStorage.setItem('email', email);
-                            localStorage.setItem('rememberMe', 'true');
-                        } else {
-                            // Clear stored email and "rememberMe" flag
-                            localStorage.removeItem('email');
-                            localStorage.removeItem('rememberMe');
-                        }
-                    } else {
-                        // Invalid password
-                        console.log('Invalid password');
-                        // Add an alert for an invalid password
-                        alert('Invalid password');
-                    }
+                const response = await props.loginUser(data);
+                console.log(response); // Log the entire response object
+                const output = response.data;
+    
+                if (output.status === "success") {
+                login({ token: output.token , email }); // Assuming login is a function that stores user information
+                navigate('/'); // Navigate to the home page
                 } else {
-                    // User not found
-                    alert('User not found');
+                    // Handle unsuccessful login (show an error message, etc.)
+                    setLoading(false);
                 }
             } catch (error) {
+                // Handle any errors from the loginUser action
                 console.error('Error during login:', error);
-            } finally {
                 setLoading(false);
             }
         }
     };
+    
 
     return (
         <div className={cx('Desktop3')}>
@@ -181,4 +133,14 @@ function Login() {
     );
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+    return {
+      alertData: state.LoginReducer.alert,
+      tokenUser: state.LoginReducer.tokenUser,
+    };
+  };
+  
+  const mapDispatchToProps = { loginUser};
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(Login);
+  

@@ -5,15 +5,17 @@ import Edit from '~/pages/Edit';
 import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
 import { createContext, useState } from 'react';
-import { useUser } from '../../../hook/UserContext'; // Import the useUser hook
+import { UserProvider,  useUser } from '../../../hook/UserContext'; // Import the useUser hook
 import useSharedState from '~/hook/useShareState';
 // import axios from 'axios';
+import { connect } from "react-redux";
+import { userLogout } from "../../../actionCreators/LoginAction";
 
 const cx = classNames.bind(styles);
 
 export const SizeContext = createContext();
 
-function DefaultLayout() {
+function DefaultLayout(props) {
     const [selectedTool, setSelectedTool] = useState('brush');
     const [brushWidth, setBrushWidth] = useState(5);
     const [selectedColor, setSelectedColor] = useState('rgb(0,0,0)');
@@ -29,9 +31,26 @@ function DefaultLayout() {
         setHeight(newHeight);
     };
 
-    const { userInfo, logout } = useUser(); // Use the useUser hook to get user, logout, and userInfo
-
+    const { userInfo, login, logout } = useUser();
+        const parseJwt = (token) => {
+        try {
+          const base64Url = token.split(".")[1];
+          const base64 = base64Url.replace("-", "+").replace("_", "/");
+          const decoded = JSON.parse(atob(base64));
+          return decoded;
+        } catch (e) {
+          console.error("Error parsing JWT:", e);
+          return null;
+        }
+      };
+      
+      // Usage
+      if (localStorage.getItem("token-user")) {
+        var userData = parseJwt(localStorage.getItem("token-user"));
+        // Now userData contains the decoded JWT payload
+      }
     const handleLogout = () => {
+        props.userLogout();
         logout();
     };
 
@@ -95,4 +114,14 @@ function DefaultLayout() {
     );
 }
 
-export default DefaultLayout;
+const mapStateToProps = (state) => {
+    return {
+      tokenUser: state.LoginReducer.tokenUser,
+    };
+  };
+  
+  const mapDispatchToProps = {
+    userLogout,
+  };
+  export default connect(mapStateToProps, mapDispatchToProps)(DefaultLayout);
+  
