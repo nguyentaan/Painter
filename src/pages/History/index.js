@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/Layout/DefautLayout/Header';
 import styles from './History.module.scss';
@@ -5,6 +6,7 @@ import classNames from 'classnames/bind';
 import { createContext } from 'react';
 import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
+import { Link } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -14,7 +16,7 @@ function History() {
     const [loading, setLoading] = useState(true);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
-    const pathBackEnd = 'https://backendpainter-v1.onrender.com'
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com';
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -111,7 +113,9 @@ function History() {
                                             Created at: {formatImageDate(image.dateImage)}
                                         </p>
                                         <div className={cx('buttons-action')}>
-                                            <button>Edit</button>
+                                            <Link to={`/edit/${image.imageID}`}>
+                                                <button>Edit</button>
+                                            </Link>
                                             <button>Delete</button>
                                         </div>
                                     </div>

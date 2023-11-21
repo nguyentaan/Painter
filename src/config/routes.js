@@ -3,6 +3,7 @@ const routes = {
     history:'/history',
     login: '/login',
     register:'/register',
+    edit:'/edit/:imageID',
 }
 
 export default routes;
