@@ -14,7 +14,7 @@ function History() {
     const [loading, setLoading] = useState(true);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
-    const pathBackEnd = 'https://backendpainter-v1.onrender.com'
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com';
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -22,10 +22,14 @@ function History() {
     };
 
     const [images, setImages] = useState([]);
-    const { userInfo, logout } = useUser();
+    const { userInfo, logout, setImgId } = useUser();
 
     const handleLogout = () => {
         logout();
+    };
+
+    const handleImgId = (imgID) => {
+        setImgId(imgID);
     };
 
     const handleDownloadImage = () => {
@@ -111,7 +115,7 @@ function History() {
                                             Created at: {formatImageDate(image.dateImage)}
                                         </p>
                                         <div className={cx('buttons-action')}>
-                                            <button>Edit</button>
+                                            <button onClick={handleImgId(image.imageID)}>Edit</button>
                                             <button>Delete</button>
                                         </div>
                                     </div>
