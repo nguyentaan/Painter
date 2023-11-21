@@ -7,6 +7,7 @@ import { createContext } from 'react';
 import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
+import useSharedState from '~/hook/useShareState';
 
 const cx = classNames.bind(styles);
 
@@ -17,6 +18,8 @@ function History() {
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'https://backendpainter-v1.onrender.com';
+
+    const [updateIsEdit] = useSharedState();
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -114,7 +117,7 @@ function History() {
                                         </p>
                                         <div className={cx('buttons-action')}>
                                             <Link to={`/edit/${image.imageID}`}>
-                                                <button>Edit</button>
+                                                <button onClick={updateIsEdit}>Edit</button>
                                             </Link>
                                             <button>Delete</button>
                                         </div>
