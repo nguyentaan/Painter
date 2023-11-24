@@ -4,7 +4,6 @@ import HeaderHistory from '../../components/Layout/DefautLayout/HeaderHistory';
 import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
-import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
 import useSharedState from '~/hook/useShareState';
@@ -78,21 +77,21 @@ function History(props) {
         return formattedDate;
     };
 
-    const parseJwt = (token) => {
-        try {
-          const base64Url = token.split(".")[1];
-          const base64 = base64Url.replace("-", "+").replace("_", "/");
-          const decoded = JSON.parse(atob(base64));
-          return decoded;
-        } catch (e) {
-          console.error("Error parsing JWT:", e);
-          return null;
-        }
-      };
+    // const parseJwt = (token) => {
+    //     try {
+    //       const base64Url = token.split(".")[1];
+    //       const base64 = base64Url.replace("-", "+").replace("_", "/");
+    //       const decoded = JSON.parse(atob(base64));
+    //       return decoded;
+    //     } catch (e) {
+    //       console.error("Error parsing JWT:", e);
+    //       return null;
+    //     }
+    //   };
       
       // Usage
       if (localStorage.getItem("token-user")) {
-        var userData = parseJwt(localStorage.getItem("token-user"));
+        // var userData = parseJwt(localStorage.getItem("token-user"));
       }
     
       useEffect(() => {
