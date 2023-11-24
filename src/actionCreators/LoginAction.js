@@ -14,6 +14,8 @@ export const loginUser = (data) => {
       const output = response.data;
 
       if (output.status === "success") {
+        localStorage.setItem('email',`${data.email}`);
+        localStorage.setItem('token-user',`${output.token}`);
         dispatch({
           type: "LOGIN_USER_SUCCESS",
           payload: output.token,
