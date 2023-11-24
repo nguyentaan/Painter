@@ -5,7 +5,8 @@ import Edit from '~/pages/Edit';
 import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
 import { createContext, useState } from 'react';
-import { UserProvider,  useUser } from '../../../hook/UserContext'; // Import the useUser hook
+import { UserProvider,  useUser } from '../../../hook/UserContext'; 
+// Import the useUser hook
 import useSharedState from '~/hook/useShareState';
 // import axios from 'axios';
 import { connect } from "react-redux";
@@ -31,7 +32,7 @@ function DefaultLayout(props) {
         setHeight(newHeight);
     };
 
-    const { userInfo, login, logout } = useUser();
+    const { userInfo, logout } = useUser();
         const parseJwt = (token) => {
         try {
           const base64Url = token.split(".")[1];
@@ -74,7 +75,7 @@ function DefaultLayout(props) {
     return (
         <SizeContext.Provider value={{ width, height, setWidth, setHeight, setSize }}>
             <div className={cx('wrapper')}>
-                <Header userInfo={userInfo} handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />
+                <Header handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />
                 <SubHeader
                     selectedTool={selectedTool}
                     setSelectedTool={setSelectedTool}

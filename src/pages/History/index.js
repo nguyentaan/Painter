@@ -4,7 +4,6 @@ import HeaderHistory from '../../components/Layout/DefautLayout/HeaderHistory';
 import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
-import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
 import useSharedState from '~/hook/useShareState';
@@ -20,34 +19,49 @@ function History(props) {
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'http://localhost:8081';
-
-    const [isEdit,updateIsEdit] = useSharedState();
+    const [updateIsEdit] = useSharedState();
+    const [images, setImages] = useState([]);
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
         setHeight(newHeight);
     };
 
-    const [images, setImages] = useState([]);
-    const { userInfo, logout } = useUser();
 
     const handleLogout = () => {
         props.userLogout();
-        logout();
     };
-
-
+    
+    const getUserIDByUserEmail = async (email) => {
+        try {
+            const response = await fetch(`${pathBackEnd}/users/getUserIDByEmail`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+            const responseData = await response.json();
+            console.log('getUserIDByUserEmail response:', responseData);
+            return responseData.userID; // Adjust this based on your actual response structure
+        } catch (error) {
+            console.error('Error fetching user ID:', error);
+            return null; // Handle the error appropriately in your application
+        }
+    };
+    
 
     const fetchImages = async () => {
         try {
             const response = await fetch(`${pathBackEnd}/getAllImages`);
             const responseData = await response.json();
-
+    
             console.log('API response:', responseData);
-
-            const data = Array.isArray(responseData.images) ? responseData.images : [];
-
-            const userImages = data.filter((image) => image.user_id === userInfo.user_id);
+    
+            const imagesArray = Array.isArray(responseData.images) ? responseData.images : [];
+            const userId = await getUserIDByUserEmail(localStorage.getItem('email'));
+            console.log("The current user " + userId + " is ")
+            const userImages = imagesArray.filter((image) => image.user_id === userId);
             setImages(userImages);
             setLoading(false);
         } catch (error) {
@@ -55,48 +69,41 @@ function History(props) {
             setLoading(false);
         }
     };
-
+    
+    
     const formatImageDate = (fullDate) => {
         const dateObject = new Date(fullDate);
         const formattedDate = dateObject.toLocaleDateString();
         return formattedDate;
     };
 
-    const parseJwt = (token) => {
-        try {
-          const base64Url = token.split(".")[1];
-          const base64 = base64Url.replace("-", "+").replace("_", "/");
-          const decoded = JSON.parse(atob(base64));
-          return decoded;
-        } catch (e) {
-          console.error("Error parsing JWT:", e);
-          return null;
-        }
-      };
+    // const parseJwt = (token) => {
+    //     try {
+    //       const base64Url = token.split(".")[1];
+    //       const base64 = base64Url.replace("-", "+").replace("_", "/");
+    //       const decoded = JSON.parse(atob(base64));
+    //       return decoded;
+    //     } catch (e) {
+    //       console.error("Error parsing JWT:", e);
+    //       return null;
+    //     }
+    //   };
       
       // Usage
       if (localStorage.getItem("token-user")) {
-        var userData = parseJwt(localStorage.getItem("token-user"));
-        // Now userData contains the decoded JWT payload
+        // var userData = parseJwt(localStorage.getItem("token-user"));
       }
     
-
-    useEffect(() => {
-        if (userInfo === null) {
+      useEffect(() => {
+        if (localStorage.getItem('email') === null) {
             alert('Directing you back to home');
             window.location.href = '/'; // Redirect to the home page
         } else {
             // Only fetch images if userInfo is not null
             fetchImages();
         }
-    }, [userInfo]);
+    }, []);
 
-    console.log('is user: ', userInfo);
-
-    if (userInfo === null) {
-        // Don't render anything if userInfo is null
-        return null;
-    }
 
     return (
         <SizeContext.Provider
@@ -108,7 +115,7 @@ function History(props) {
                 setSize,
             }}
         >
-            <HeaderHistory userInfo={userInfo} handleLogout={handleLogout}/>{' '}
+            <HeaderHistory handleLogout={handleLogout}/>{' '}
             <div className={cx('wrapper')}>
                 <div className={cx('container-history')}>
                     {loading ? (
@@ -117,7 +124,7 @@ function History(props) {
                         </div>
                     ) : (
                         <>
-                            <h3> This is a history details of User: {userData.email} </h3>{' '}
+                            <h3> This is a history details of User: {localStorage.getItem('email')} </h3>{' '}
                             <div className={cx('list-images')}>
                                 {images.map((image) => (
                                     <div key={image.imageID} className={cx('image-item')}>
