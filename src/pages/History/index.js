@@ -7,7 +7,6 @@ import { createContext } from 'react';
 import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
-import useSharedState from '~/hook/useShareState';
 import { connect } from "react-redux";
 import { userLogout } from "../../actionCreators/LoginAction";
 
@@ -20,8 +19,6 @@ function History(props) {
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'http://localhost:8081';
-
-    const [isEdit,updateIsEdit] = useSharedState();
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -127,7 +124,7 @@ function History(props) {
                                         </p>
                                         <div className={cx('buttons-action')}>
                                             <Link to={`/edit/${image.imageID}`}>
-                                                <button onClick={updateIsEdit}>Edit</button>
+                                                <button>Edit</button>
                                             </Link>
                                             <button>Delete</button>
                                         </div>
