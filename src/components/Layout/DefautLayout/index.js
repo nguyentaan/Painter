@@ -4,12 +4,11 @@ import Home from '~/pages/Home';
 import Edit from '~/pages/Edit';
 import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
-import { createContext, useState } from 'react';
-import { UserProvider,  useUser } from '../../../hook/UserContext'; // Import the useUser hook
-import useSharedState from '~/hook/useShareState';
-// import axios from 'axios';
-import { connect } from "react-redux";
-import { userLogout } from "../../../actionCreators/LoginAction";
+import { createContext, useState, useEffect } from 'react';
+import { useUser } from '../../../hook/UserContext';
+import { connect } from 'react-redux';
+import { userLogout } from '../../../actionCreators/LoginAction';
+import { setEditMode } from '../../../actionCreators/UserAction';
 
 const cx = classNames.bind(styles);
 
@@ -20,9 +19,8 @@ function DefaultLayout(props) {
     const [brushWidth, setBrushWidth] = useState(5);
     const [selectedColor, setSelectedColor] = useState('rgb(0,0,0)');
     const [isClear, setIsClear] = useState(false);
-    const [isEdit] = useSharedState();
     // const [isDraging, setIsDragging] = useState(false);
-
+    const [editMode, setEditMode] = useState(false);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
 
@@ -30,25 +28,33 @@ function DefaultLayout(props) {
         setWidth(newWidth);
         setHeight(newHeight);
     };
+    const handleSetEditMode = (value) => {
+        setEditMode(value);
+        props.setEditMode(value); // Dispatch action to update Redux store
+    };
 
-    const { userInfo, login, logout } = useUser();
-        const parseJwt = (token) => {
+    const { userInfo, logout } = useUser();
+    const parseJwt = (token) => {
         try {
-          const base64Url = token.split(".")[1];
-          const base64 = base64Url.replace("-", "+").replace("_", "/");
-          const decoded = JSON.parse(atob(base64));
-          return decoded;
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace('-', '+').replace('_', '/');
+            const decoded = JSON.parse(atob(base64));
+            return decoded;
         } catch (e) {
-          console.error("Error parsing JWT:", e);
-          return null;
+            console.error('Error parsing JWT:', e);
+            return null;
         }
-      };
-      
-      // Usage
-      if (localStorage.getItem("token-user")) {
-        var userData = parseJwt(localStorage.getItem("token-user"));
+    };
+    useEffect(() => {
+        handleSetEditMode(localStorage.getItem('isEditValue'));
+    }, []);
+    // Usage
+    if (localStorage.getItem('token-user')) {
+        var userData = parseJwt(localStorage.getItem('token-user'));
         // Now userData contains the decoded JWT payload
-      }
+    }
+
+    console.log(editMode, 'trang thai edit mode');
     const handleLogout = () => {
         props.userLogout();
         logout();
@@ -74,7 +80,7 @@ function DefaultLayout(props) {
     return (
         <SizeContext.Provider value={{ width, height, setWidth, setHeight, setSize }}>
             <div className={cx('wrapper')}>
-                <Header userInfo={userInfo} handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />
+                <Header handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />
                 <SubHeader
                     selectedTool={selectedTool}
                     setSelectedTool={setSelectedTool}
@@ -85,8 +91,8 @@ function DefaultLayout(props) {
                     // setIsDragging={setIsDragging}
                 />
                 <div className={cx('container')}>
-                    {isEdit ? (
-                        <Edit
+                    {editMode ? (
+                        <Edit 
                             userInfo={userInfo}
                             selectedTool={selectedTool}
                             brushWidth={brushWidth}
@@ -116,12 +122,13 @@ function DefaultLayout(props) {
 
 const mapStateToProps = (state) => {
     return {
-      tokenUser: state.LoginReducer.tokenUser,
+        tokenUser: state.LoginReducer.tokenUser,
+        editMode: state.UserReducer.editMode,
     };
-  };
-  
-  const mapDispatchToProps = {
+};
+
+const mapDispatchToProps = {
     userLogout,
-  };
-  export default connect(mapStateToProps, mapDispatchToProps)(DefaultLayout);
-  
+    setEditMode,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(DefaultLayout);
