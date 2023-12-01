@@ -29,43 +29,6 @@ export const getDataProduct = () => {
     };
 };
 
-export const addItemToCart = (item) => {
-    return (dispatch) => {
-        dispatch({
-            type: 'ADD_ITEM_TO_CART',
-            payload: item,
-        });
-    };
-};
-
-// inside cart object
-export const increaseQtyBuy = (itemId) => {
-    return (dispatch) => {
-        dispatch({
-            type: 'INCREASE_QTY_BUY',
-            payload: itemId,
-        });
-    };
-};
-
-export const decreaseQtyBuy = (itemId) => {
-    return (dispatch) => {
-        dispatch({
-            type: 'DECREASE_QTY_BUY',
-            payload: itemId,
-        });
-    };
-};
-
-export const deleteItemFromCart = (item) => {
-    return (dispatch) => {
-        dispatch({
-            type: 'DELETE_ITEM_FROM_CART',
-            payload: item,
-        });
-    };
-};
-
 export const setEditMode = (value) => {
     return {
         type: 'SET_EDIT_MODE',

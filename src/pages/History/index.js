@@ -16,6 +16,7 @@ export const SizeContext = createContext();
 
 function History(props) {
     const [loading, setLoading] = useState(true);
+    const [deleting, setDeleting] = useState(false);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'http://localhost:8081';
@@ -61,9 +62,36 @@ function History(props) {
             const userImages = imagesArray.filter((image) => image.user_id === userId);
             setImages(userImages);
             setLoading(false);
+            setDeleting(false);
         } catch (error) {
             console.error('Error fetching images:', error);
             setLoading(false);
+            setDeleting(false);
+        }
+    };
+
+    const deleteImageId = async (imageID) => {
+        try {
+            setDeleting(true);
+            await fetch(`${pathBackEnd}/delete/${imageID}`, {
+                method: 'DELETE',
+            });
+
+            fetchImages();
+        } catch (error) {
+            console.error('Error deleting image: ', error);
+        }
+    };
+
+    const deleteAllImages = async () => {
+        try {
+            setDeleting(true);
+            await fetch(`${pathBackEnd}/deleteAllImages`, {
+                method: 'DELETE',
+            });
+            fetchImages();
+        } catch (error) {
+            console.error('Error deleting all images: ', error);
         }
     };
 
@@ -72,7 +100,7 @@ function History(props) {
         const formattedDate = dateObject.toLocaleDateString();
         return formattedDate;
     };
-    localStorage.setItem('isEditValue' , false );
+    localStorage.setItem('isEditValue', false);
 
     // const isEditMode = async (value) => {
     //     localStorage.setItem('isEditValue', value);
@@ -82,7 +110,7 @@ function History(props) {
 
     const isEditMode = async (value) => {
         props.setEditMode(value);
-    }
+    };
 
     useEffect(() => {
         props.setEditMode(true);
@@ -116,13 +144,18 @@ function History(props) {
             <HeaderHistory handleLogout={handleLogout} />{' '}
             <div className={cx('wrapper')}>
                 <div className={cx('container-history')}>
-                    {loading ? (
+                    {loading || deleting ? (
                         <div className={cx('overlay')}>
                             <Loader />
                         </div>
                     ) : (
                         <>
-                            <h3> This is a history details of User: {localStorage.getItem('email')} </h3>{' '}
+                            <div className={cx('container-header')}>
+                                <h3>{localStorage.getItem('email')} </h3>
+                                <div className={cx('buttons-action')}>
+                                    <button onClick={deleteAllImages()}>Delete All</button>
+                                </div>
+                            </div>
                             <div className={cx('list-images')}>
                                 {images.map((image) => (
                                     <div key={image.imageID} className={cx('image-item')}>
@@ -134,7 +167,7 @@ function History(props) {
                                             <Link to={`/edit/${image.imageID}`}>
                                                 <button onClick={() => isEditMode(true)}>Edit</button>
                                             </Link>
-                                            <button>Delete</button>
+                                            <button onClick={() => deleteImageId(image.imageID)}>Delete</button>
                                         </div>
                                     </div>
                                 ))}

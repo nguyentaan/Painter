@@ -4,7 +4,7 @@ import Home from '~/pages/Home';
 import Edit from '~/pages/Edit';
 import styles from './DefaultLayout.module.scss';
 import classNames from 'classnames/bind';
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useRef } from 'react';
 import { useUser } from '../../../hook/UserContext';
 import { connect } from 'react-redux';
 import { userLogout } from '../../../actionCreators/LoginAction';
@@ -23,6 +23,7 @@ function DefaultLayout(props) {
     const [editMode, setEditMode] = useState(false);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
+    const canvasRef = useRef(null);
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -47,7 +48,7 @@ function DefaultLayout(props) {
     };
     useEffect(() => {
         handleSetEditMode(props.editMode);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.editMode]);
     // Usage
     if (localStorage.getItem('token-user')) {
@@ -61,18 +62,22 @@ function DefaultLayout(props) {
     };
 
     const handleDownloadImage = () => {
-        const canvas = document.getElementById('myCanvas');
-        if (canvas) {
+        // const canvas = document.getElementById('myCanvas');
+        if (canvasRef.current) {
+            const canvas = canvasRef.current;
             const timestamp = new Date().getTime();
             const randomString = Math.random().toString(36).substring(7);
-            // Combine timestamp and random string for a unique name
             const fileName = `drawing_${timestamp}_${randomString}.jpg`;
+
             // Get the Data URL of the canvas content as a JPEG image
             const imageDataURL = canvas.toDataURL('image/jpeg');
-            //Create a temporary link element
+
+            // Create a temporary link element
             const link = document.createElement('a');
             link.href = imageDataURL;
             link.download = fileName;
+
+            // Trigger a click on the link to initiate the download
             link.click();
         }
     };
@@ -80,7 +85,7 @@ function DefaultLayout(props) {
     return (
         <SizeContext.Provider value={{ width, height, setWidth, setHeight, setSize }}>
             <div className={cx('wrapper')}>
-                <Header handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />
+                <Header handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} canvasRef={canvasRef}/>
                 <SubHeader
                     selectedTool={selectedTool}
                     setSelectedTool={setSelectedTool}
@@ -92,7 +97,7 @@ function DefaultLayout(props) {
                 />
                 <div className={cx('container')}>
                     {editMode ? (
-                        <Edit 
+                        <Edit
                             userInfo={userInfo}
                             selectedTool={selectedTool}
                             brushWidth={brushWidth}
@@ -101,6 +106,7 @@ function DefaultLayout(props) {
                             height={height}
                             isClear={isClear}
                             setIsClear={setIsClear}
+                            canvasRef={canvasRef}
                         />
                     ) : (
                         <Home
@@ -112,6 +118,7 @@ function DefaultLayout(props) {
                             height={height}
                             isClear={isClear}
                             setIsClear={setIsClear}
+                            canvasRef={canvasRef}
                         />
                     )}
                 </div>

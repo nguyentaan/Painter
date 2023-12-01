@@ -10,8 +10,8 @@ import { useEffect, useRef, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
-    const canvasRef = useRef(null);
+function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
+    // const canvasRef = useRef(null);
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(null);
@@ -26,16 +26,42 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const context = canvas.getContext('2d');
 
         if (context) {
-            context.willReadFrequently = true; // Set the willReadFrequently attribute
+            context.willReadFrequently = true;
             setCanvasBackground(context);
             setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
         }
+
         if (isClear) {
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             clearCanvas();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isClear]);
+    }, [isClear, canvasRef]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+
+        if (!canvas || !context) {
+            console.error('Canvas or context not available.');
+            return;
+        }
+
+        //set the minimum width and height
+        const minWidth = 1;
+        const minHeight = 1;
+
+        // Update width and height if they are less than the minimum
+        const newWidth = Math.max(width, minWidth);
+        const newHeight = Math.max(height, minHeight);
+
+        if (context) {
+            context.canvas.width = newWidth;
+            context.canvas.height = newHeight;
+            setCanvasBackground(context);
+            setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [width, height, canvasRef]);
 
     const setCanvasBackground = (context) => {
         context.fillStyle = '#fff';

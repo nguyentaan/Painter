@@ -8,8 +8,7 @@ import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
-function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear, props }) {
-    const canvasRef = useRef(null);
+function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear, props }) {
     const { imageID } = useParams();
     console.log('Day la imageID dang duoc edit', imageID);
 
@@ -31,7 +30,7 @@ function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear,
                         setImageData(imageDataFromResponse);
                     } else {
                         console.error('Error fetching image. No image_data in response.');
-                    }  // console.log('Response Data:', response.data);
+                    } // console.log('Response Data:', response.data);
                     setImageData(response.images.imageData);
                 } else {
                     console.error('Error fetching image. Status:', response.status);
@@ -51,17 +50,15 @@ function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
-        // if (context) {
-        //     setCanvasBackground(context);
-        //     setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
-        // }
-
         if (context && imageData) {
             const img = new Image();
             img.src = imageData;
             img.onload = () => {
                 console.log('Image loaded successfully:', img);
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
                 context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // context.drawImage(img, 0, 0);
             };
 
             img.onerror = (error) => {
@@ -76,6 +73,22 @@ function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isClear, imageData]);
 
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+
+        if (context) {
+            context.willReadFrequently = true;
+            setCanvasBackground(context);
+            setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+        }
+
+        if (isClear) {
+            clearCanvas();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isClear, canvasRef]);
+
     const setCanvasBackground = (context) => {
         context.fillStyle = '#fff';
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -83,7 +96,7 @@ function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear,
     };
 
     const saveCanvasState = (context) => {
-        const canvas = context.canvas;
+        const canvas = canvasRef.current;
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
         undoStack.current.push(imageData);
         redoStack.current = []; // Clear the redoStack after saving a new state
@@ -345,7 +358,6 @@ function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear,
     return (
         <section className={cx('drawing-board')}>
             <h2>Edit Image {imageID}</h2>
-            <h2>Trang thai Edit Image {localStorage.getItem('isEditValue')}</h2>
 
             <div className={cx('actions')}>
                 <button
