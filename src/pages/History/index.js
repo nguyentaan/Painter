@@ -74,11 +74,15 @@ function History(props) {
     };
     localStorage.setItem('isEditValue' , false );
 
+    // const isEditMode = async (value) => {
+    //     localStorage.setItem('isEditValue', value);
+    //     await props.setEditMode(localStorage.getItem('isEditValue'));
+    //     console.log('editMode:', props.editMode);
+    // };
+
     const isEditMode = async (value) => {
-        localStorage.setItem('isEditValue', value);
-        await props.setEditMode(localStorage.getItem('isEditValue'));
-        console.log('editMode:', props.editMode);
-    };
+        props.setEditMode(value);
+    }
 
     useEffect(() => {
         props.setEditMode(true);

@@ -46,15 +46,15 @@ function DefaultLayout(props) {
         }
     };
     useEffect(() => {
-        handleSetEditMode(localStorage.getItem('isEditValue'));
-    }, []);
+        handleSetEditMode(props.editMode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.editMode]);
     // Usage
     if (localStorage.getItem('token-user')) {
         var userData = parseJwt(localStorage.getItem('token-user'));
         // Now userData contains the decoded JWT payload
     }
 
-    console.log(editMode, 'trang thai edit mode');
     const handleLogout = () => {
         props.userLogout();
         logout();
