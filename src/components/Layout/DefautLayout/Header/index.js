@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-    Link
-} from 'react-router-dom';
-import {
-    useState , useEffect
-} from 'react';
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './Header.module.scss';
 import classNames from 'classnames/bind';
@@ -15,10 +11,7 @@ import exit from '~/assets/icons/Exit-1.svg';
 
 const cx = classNames.bind(styles);
 
-function Header({
-    handleLogout,
-    handleDownloadImage
-}) {
+function Header({ canvasRef, handleLogout, handleDownloadImage }) {
     // const pathBackEnd = 'https://backendpainter-v1.onrender.com'
     const pathBackEnd = 'http://localhost:8081';
 
@@ -42,6 +35,7 @@ function Header({
         // Clear localStorage when logging out
         localStorage.removeItem('email');
         localStorage.removeItem('token-user');
+        handleLogout();
     };
 
     const getUserIDByUserEmail = async (email) => {
@@ -81,33 +75,37 @@ function Header({
                 user_id: id,
                 image_data: image_data_url,
             });
-    
+
             console.log(response.data);
         } catch (error) {
             console.error('Error saving canvas image:', error);
             console.log('Error details:', error.response.data);
         }
     };
-    
-    
+
     const handleSaveAndDownload = () => {
-        const canvas = document.getElementById('myCanvas');
-        if (canvas) {
+        // const canvas = document.getElementById('myCanvas');
+        if (canvasRef.current) {
+            const canvas = canvasRef.current;
             const timestamp = new Date().getTime();
             const randomString = Math.random().toString(36).substring(7);
+
             // Get the Data URL of the canvas content as a JPEG image
             const imageDataURL = canvas.toDataURL('image/jpeg');
             console.log(imageDataURL);
+
             // Trong currentUser da co user_id
             if (localStorage.getItem('email')) {
                 const userID = localStorage.getItem('userID');
-                
+
                 // Save canvas image to the database
                 saveCanvasImage(userID, imageDataURL);
-                
+
                 // Construct a custom filename based on user and image IDs
-                const fileName = `paintingimage__createby_${localStorage.getItem('email')}_${timestamp}_${randomString}.jpg`;
-                
+                const fileName = `paintingimage__createby_${localStorage.getItem(
+                    'email',
+                )}_${timestamp}_${randomString}.jpg`;
+
                 // Create a temporary link element for downloading
                 const link = document.createElement('a');
                 link.href = imageDataURL;
@@ -116,7 +114,6 @@ function Header({
             }
         }
     };
-    
 
     return (
         <header className={cx('wrapper')}>
@@ -136,7 +133,7 @@ function Header({
                     <span className={cx('items')} onClick={handleDownloadImage}>
                         Download
                     </span>
-                </div>    
+                </div>
             ) : (
                 <div className={cx('left-items')}>
                     <span className={cx('items')} onClick={handleNewButtonClick}>
@@ -144,7 +141,7 @@ function Header({
                     </span>
                     {isDialogOpen && (
                         <div className={cx('overlay')} onClick={handleOverlayClick}>
-                            <Dialog />
+                            <Dialog onClose={handleCloseDialog} />
                         </div>
                     )}
                     <span className={cx('items')} onClick={handleDownloadImage}>
@@ -156,7 +153,10 @@ function Header({
             {localStorage.getItem('email') ? (
                 <div className={cx('right-items')}>
                     <Link to={`${config.routes.history}`}>
-                        <img src={user} alt="user" className={cx('items-login')} />
+                        <div className={cx('wrapper-user', 'items-logins')}>
+                            <img src={user} alt="user" />
+                            <p>{localStorage.getItem('email')}</p>
+                        </div>
                     </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
                 </div>
@@ -166,7 +166,7 @@ function Header({
                         <span className={cx('items')}> Login </span>
                     </Link>
                     <Link to={config.routes.register}>
-                        <span className={cx('items')}> Register </span>
+                        <span className={cx('items')}> Sign up </span>
                     </Link>
                 </div>
             )}

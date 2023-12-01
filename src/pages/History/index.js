@@ -6,9 +6,9 @@ import classNames from 'classnames/bind';
 import { createContext } from 'react';
 import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
-import useSharedState from '~/hook/useShareState';
-import { connect } from "react-redux";
-import { userLogout } from "../../actionCreators/LoginAction";
+import { connect } from 'react-redux';
+import { userLogout } from '../../actionCreators/LoginAction';
+import { setEditMode } from '~/actionCreators/UserAction';
 
 const cx = classNames.bind(styles);
 
@@ -16,10 +16,10 @@ export const SizeContext = createContext();
 
 function History(props) {
     const [loading, setLoading] = useState(true);
+    const [deleting, setDeleting] = useState(false);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'http://localhost:8081';
-    const [updateIsEdit] = useSharedState();
     const [images, setImages] = useState([]);
 
     const setSize = (newWidth, newHeight) => {
@@ -27,11 +27,10 @@ function History(props) {
         setHeight(newHeight);
     };
 
-
     const handleLogout = () => {
         props.userLogout();
     };
-    
+
     const getUserIDByUserEmail = async (email) => {
         try {
             const response = await fetch(`${pathBackEnd}/users/getUserIDByEmail`, {
@@ -49,61 +48,88 @@ function History(props) {
             return null; // Handle the error appropriately in your application
         }
     };
-    
 
     const fetchImages = async () => {
         try {
             const response = await fetch(`${pathBackEnd}/getAllImages`);
             const responseData = await response.json();
-    
+
             console.log('API response:', responseData);
-    
+
             const imagesArray = Array.isArray(responseData.images) ? responseData.images : [];
             const userId = await getUserIDByUserEmail(localStorage.getItem('email'));
-            console.log("The current user " + userId + " is ")
+            console.log('The current user ' + userId + ' is ');
             const userImages = imagesArray.filter((image) => image.user_id === userId);
             setImages(userImages);
             setLoading(false);
+            setDeleting(false);
         } catch (error) {
             console.error('Error fetching images:', error);
             setLoading(false);
+            setDeleting(false);
         }
     };
-    
-    
+
+    const deleteImageId = async (imageID) => {
+        try {
+            setDeleting(true);
+            await fetch(`${pathBackEnd}/delete/${imageID}`, {
+                method: 'DELETE',
+            });
+
+            fetchImages();
+        } catch (error) {
+            console.error('Error deleting image: ', error);
+        }
+    };
+
+    const deleteAllImages = async () => {
+        try {
+            setDeleting(true);
+            await fetch(`${pathBackEnd}/deleteAllImages`, {
+                method: 'DELETE',
+            });
+            fetchImages();
+        } catch (error) {
+            console.error('Error deleting all images: ', error);
+        }
+    };
+
     const formatImageDate = (fullDate) => {
         const dateObject = new Date(fullDate);
         const formattedDate = dateObject.toLocaleDateString();
         return formattedDate;
     };
+    localStorage.setItem('isEditValue', false);
 
-    // const parseJwt = (token) => {
-    //     try {
-    //       const base64Url = token.split(".")[1];
-    //       const base64 = base64Url.replace("-", "+").replace("_", "/");
-    //       const decoded = JSON.parse(atob(base64));
-    //       return decoded;
-    //     } catch (e) {
-    //       console.error("Error parsing JWT:", e);
-    //       return null;
-    //     }
-    //   };
-      
-      // Usage
-      if (localStorage.getItem("token-user")) {
+    // const isEditMode = async (value) => {
+    //     localStorage.setItem('isEditValue', value);
+    //     await props.setEditMode(localStorage.getItem('isEditValue'));
+    //     console.log('editMode:', props.editMode);
+    // };
+
+    const isEditMode = async (value) => {
+        props.setEditMode(value);
+    };
+
+    useEffect(() => {
+        props.setEditMode(true);
+    }, []);
+
+    if (localStorage.getItem('token-user')) {
         // var userData = parseJwt(localStorage.getItem("token-user"));
-      }
-    
-      useEffect(() => {
+    }
+
+    useEffect(() => {
         if (localStorage.getItem('email') === null) {
             alert('Directing you back to home');
             window.location.href = '/'; // Redirect to the home page
+            props.setEditMode(false);
         } else {
             // Only fetch images if userInfo is not null
             fetchImages();
         }
     }, []);
-
 
     return (
         <SizeContext.Provider
@@ -115,16 +141,21 @@ function History(props) {
                 setSize,
             }}
         >
-            <HeaderHistory handleLogout={handleLogout}/>{' '}
+            <HeaderHistory handleLogout={handleLogout} />{' '}
             <div className={cx('wrapper')}>
                 <div className={cx('container-history')}>
-                    {loading ? (
+                    {loading || deleting ? (
                         <div className={cx('overlay')}>
                             <Loader />
                         </div>
                     ) : (
                         <>
-                            <h3> This is a history details of User: {localStorage.getItem('email')} </h3>{' '}
+                            <div className={cx('container-header')}>
+                                <h3>{localStorage.getItem('email')} </h3>
+                                <div className={cx('buttons-action')}>
+                                    <button onClick={deleteAllImages()}>Delete All</button>
+                                </div>
+                            </div>
                             <div className={cx('list-images')}>
                                 {images.map((image) => (
                                     <div key={image.imageID} className={cx('image-item')}>
@@ -134,9 +165,9 @@ function History(props) {
                                         </p>
                                         <div className={cx('buttons-action')}>
                                             <Link to={`/edit/${image.imageID}`}>
-                                                <button onClick={updateIsEdit}>Edit</button>
+                                                <button onClick={() => isEditMode(true)}>Edit</button>
                                             </Link>
-                                            <button>Delete</button>
+                                            <button onClick={() => deleteImageId(image.imageID)}>Delete</button>
                                         </div>
                                     </div>
                                 ))}
@@ -151,12 +182,14 @@ function History(props) {
 
 const mapStateToProps = (state) => {
     return {
-      tokenUser: state.LoginReducer.tokenUser,
-      dataCart: state.UserReducer.dataCart,
+        tokenUser: state.LoginReducer.tokenUser,
+        dataCart: state.UserReducer.dataCart,
+        editMode: state.UserReducer.editMode,
     };
-  };
-  
-  const mapDispatchToProps = {
+};
+
+const mapDispatchToProps = {
     userLogout,
-  };
-  export default connect(mapStateToProps, mapDispatchToProps)(History);
+    setEditMode,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(History);
