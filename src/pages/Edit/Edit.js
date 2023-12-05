@@ -2,53 +2,46 @@ import styles from './Edit.module.scss';
 import classNames from 'classnames/bind';
 import undoAction from '~/assets/icons/rotate-left-solid.svg';
 import redoAction from '~/assets/icons/rotate-right-solid.svg';
-// import { useUser } from '~/hook/UserContext';
-// import Konva from 'konva';
-// import { Stage, Layer, Rect, Text } from 'react-konva';
-
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const cx = classNames.bind(styles);
 
-function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
-    const canvasRef = useRef(null);
-    const {imageID} =useParams();
-    console.log(imageID);
+function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear, props }) {
+    const { imageID } = useParams();
+    console.log('Day la imageID dang duoc edit', imageID);
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(null);
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
-    // const [shapes, setShapes] = useState([]); // Store drawn shapes
-    // const [selectedShape, setSelectedShape] = useState(null);
 
     // const pathBackEnd = 'https://backendpainter-v1.onrender.com';
-    // const { userInfo, imgId } = useUser();
-    // const [imageData, setImageData] = useState(null);
+    const [imageData, setImageData] = useState('');
 
-    // useEffect(() => {
-    //     const fetchData = async () =>{
-    //         try {
-    //             const response = await fetch (`${pathBackEnd}/${userInfo.user_id}/${imgId}`,{
-    //                 method: 'PUT',
-    //                 headers:{
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify({}),
-    //             });
-    //             if (response.ok){
-    //                 const data = await response.json();
-    //                 setImageData(data.image);
-    //             } else {
-    //                 console.error('Failed to fetch image');
-    //             }
-    //         } catch (error){
-    //             console.error('Error fetching image:',error);
-    //         }
-    //     }
-    //     fetchData();
-    // },[userInfo.user_id,imgId]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8081/getImage/${imageID}`);
+                if (response.status === 200) {
+                    const imageDataFromResponse = response.data.images[0]?.image_data;
+                    if (imageDataFromResponse) {
+                        setImageData(imageDataFromResponse);
+                    } else {
+                        console.error('Error fetching image. No image_data in response.');
+                    } // console.log('Response Data:', response.data);
+                    setImageData(response.images.imageData);
+                } else {
+                    console.error('Error fetching image. Status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching image:', error);
+            }
+        };
+
+        fetchData();
+    }, [imageID]);
 
     const undoStack = useRef([]);
     const redoStack = useRef([]);
@@ -57,16 +50,44 @@ function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
-        if (context) {
-            setCanvasBackground(context);
-            setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+        if (context && imageData) {
+            const img = new Image();
+            img.src = imageData;
+            img.onload = () => {
+                console.log('Image loaded successfully:', img);
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                context.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // context.drawImage(img, 0, 0);
+            };
+
+            img.onerror = (error) => {
+                console.error('Error loading image:', error);
+            };
         }
+
         if (isClear) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
             clearCanvas();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isClear]);
+    }, [isClear, imageData]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+
+        if (context) {
+            context.willReadFrequently = true;
+            setCanvasBackground(context);
+            setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+        }
+
+        if (isClear) {
+            clearCanvas();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isClear, canvasRef]);
 
     const setCanvasBackground = (context) => {
         context.fillStyle = '#fff';
@@ -75,7 +96,7 @@ function Edit({ selectedTool, brushWidth, selectedColor, width, height, isClear,
     };
 
     const saveCanvasState = (context) => {
-        const canvas = context.canvas;
+        const canvas = canvasRef.current;
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
         undoStack.current.push(imageData);
         redoStack.current = []; // Clear the redoStack after saving a new state

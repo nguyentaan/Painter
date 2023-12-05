@@ -6,21 +6,30 @@ import classNames from 'classnames/bind';
 import config from '~/config';
 import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
+import { setEditMode } from '~/actionCreators/UserAction';
+import { connect } from 'react-redux';
 
 const cx = classNames.bind(styles);
-function HeaderHistory({ handleLogout}) {
+function HeaderHistory({ handleLogout }, props) {
     const handleQuit = () => {
         // Clear localStorage when logging out
         localStorage.removeItem('email');
         localStorage.removeItem('token-user');
+        handleLogout();
     };
 
     useEffect(() => {
         if (localStorage.getItem('email') === null) {
             alert('Directing you back to home');
             window.location.href = '/'; // Redirect to the home page
+            setEditMode(false);
         }
     }, []);
+
+    const isEditMode = async (value) => {
+        localStorage.setItem('isEditValue', value);
+    };
+
 
     return (
         <header className={cx('wrapper')}>
@@ -28,25 +37,25 @@ function HeaderHistory({ handleLogout}) {
             {localStorage.getItem('email') ? (
                 <div className={cx('left-items')}>
                     <Link to={`${config.routes.home}`}>
-                    <span className={cx('items')}>
-                        Back{' '}
-                    </span>{' '}
-                    </Link> 
+                        <button className={cx('items')} onClick={() => isEditMode(false)}>
+                            Back{' '}
+                        </button>{' '}
+                    </Link>
                 </div>
             ) : (
                 <div className={cx('left-items')}>
                     <Link to={`${config.routes.home}`}>
-                    <span className={cx('items')}>
-                        Back{' '}
-                    </span>{' '}
-                    </Link> 
+                        <span className={cx('items')}>Back </span>{' '}
+                    </Link>
                 </div>
             )}
-
-            {localStorage.getItem('email') ?(
+            {localStorage.getItem('email') ? (
                 <div className={cx('right-items')}>
                     <Link to={`${config.routes.history}`}>
-                        <img src={user} alt="user" className={cx('items-login')} />
+                        <div className={cx('wrapper-user', 'items-logins')}>
+                            <img src={user} alt="user"/>
+                            <p>{localStorage.getItem('email')}</p>
+                        </div>
                     </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
                 </div>
@@ -64,4 +73,16 @@ function HeaderHistory({ handleLogout}) {
     );
 }
 
-export default HeaderHistory;
+const mapStateToProps = (state) => {
+    return {
+        editMode: state.UserReducer.editMode,
+    };
+};
+
+const mapDispatchToProps = {
+    setEditMode,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderHistory);
+
+// export default HeaderHistory;
