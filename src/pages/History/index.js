@@ -5,6 +5,7 @@ import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
 import Loader from '~/components/items/Loader';
+import Snackbar from '~/components/items/Snackbar';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userLogout } from '../../actionCreators/LoginAction';
@@ -21,6 +22,7 @@ function History(props) {
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'http://localhost:8081';
     const [images, setImages] = useState([]);
+    const [snackbar, setSnackbar] = useState({ message: '', type: '' });
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -78,22 +80,20 @@ function History(props) {
             });
 
             fetchImages();
+            setSnackbar((prevSnackbar) => ({
+                ...prevSnackbar,
+                message: 'Image deleted successfully!',
+                type: 'success',
+            }));
         } catch (error) {
             console.error('Error deleting image: ', error);
+            setSnackbar({ message: 'Error deleting image', type: 'error' });
         }
     };
+    // useEffect(() => {
+    //     console.log(snackbar);
+    // }, [snackbar]);
 
-    const deleteAllImages = async () => {
-        try {
-            setDeleting(true);
-            await fetch(`${pathBackEnd}/deleteAllImages`, {
-                method: 'DELETE',
-            });
-            fetchImages();
-        } catch (error) {
-            console.error('Error deleting all images: ', error);
-        }
-    };
 
     const formatImageDate = (fullDate) => {
         const dateObject = new Date(fullDate);
@@ -153,7 +153,7 @@ function History(props) {
                             <div className={cx('container-header')}>
                                 <h3>{localStorage.getItem('email')} </h3>
                                 <div className={cx('buttons-action')}>
-                                    <button onClick={deleteAllImages()}>Delete All</button>
+                                    <button>Delete All</button>
                                 </div>
                             </div>
                             <div className={cx('list-images')}>
@@ -176,6 +176,11 @@ function History(props) {
                     )}
                 </div>
             </div>
+            <Snackbar
+                message={snackbar.message}
+                type={snackbar.type}
+                onClose={() => setSnackbar({ message: '', type: '' })}
+            />
         </SizeContext.Provider>
     );
 }

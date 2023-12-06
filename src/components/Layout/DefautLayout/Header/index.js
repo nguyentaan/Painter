@@ -79,7 +79,6 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
             console.log(response.data);
         } catch (error) {
             console.error('Error saving canvas image:', error);
-            console.log('Error details:', error.response.data);
         }
     };
 
@@ -153,10 +152,7 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
             {localStorage.getItem('email') ? (
                 <div className={cx('right-items')}>
                     <Link to={`${config.routes.history}`}>
-                        <div className={cx('wrapper-user', 'items-logins')}>
-                            <img src={user} alt="user" />
-                            <p>{localStorage.getItem('email')}</p>
-                        </div>
+                        <img src={user} alt="user" className={cx('items-login')} />
                     </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
                 </div>

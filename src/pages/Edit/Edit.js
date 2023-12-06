@@ -358,17 +358,20 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
     return (
         <section className={cx('drawing-board')}>
             <h2>Edit Image {imageID}</h2>
-
             <div className={cx('actions')}>
                 <button
-                    className={cx(styles['button'], { [styles['disabled-button']]: undoStack.current.length === 0 })}
+                    className={cx(styles['button'], {
+                        [styles['disabled-button']]: undoStack.current.length === 0,
+                    })}
                     onClick={undo}
                 >
                     {' '}
                     <img src={undoAction} alt="undo" className={cx('items')} />
                 </button>
                 <button
-                    className={cx(styles['button'], { [styles['disabled-button']]: redoStack.current.length === 0 })}
+                    className={cx(styles['button'], {
+                        [styles['disabled-button']]: redoStack.current.length === 0,
+                    })}
                     onClick={redo}
                 >
                     {' '}
