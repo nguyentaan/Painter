@@ -8,7 +8,7 @@ import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userLogout } from '../../actionCreators/LoginAction';
-import { setEditMode } from '~/actionCreators/UserAction';
+import { setEditMode } from '../../actionCreators/UserAction';
 
 const cx = classNames.bind(styles);
 
@@ -51,13 +51,11 @@ function History(props) {
 
     const fetchImages = async () => {
         try {
-            const response = await fetch(`${pathBackEnd}/getAllImages`);
+            const userId = await getUserIDByUserEmail(localStorage.getItem('email'));
+            const response = await fetch(`${pathBackEnd}/getImagesOfUser/${userId}`);
             const responseData = await response.json();
 
-            console.log('API response:', responseData);
-
             const imagesArray = Array.isArray(responseData.images) ? responseData.images : [];
-            const userId = await getUserIDByUserEmail(localStorage.getItem('email'));
             console.log('The current user ' + userId + ' is ');
             const userImages = imagesArray.filter((image) => image.user_id === userId);
             setImages(userImages);
@@ -101,19 +99,16 @@ function History(props) {
         const formattedDate = dateObject.toLocaleDateString();
         return formattedDate;
     };
+
     localStorage.setItem('isEditValue', false);
 
     const isEditMode = async (value) => {
-        props.setEditMode(value);
+        localStorage.setItem('isEditValue', value);
     };
 
     useEffect(() => {
         props.setEditMode(true);
     }, []);
-
-    if (localStorage.getItem('token-user')) {
-        // var userData = parseJwt(localStorage.getItem("token-user"));
-    }
 
     useEffect(() => {
         if (localStorage.getItem('email') === null) {

@@ -10,7 +10,8 @@ const cx = classNames.bind(styles);
 
 function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear, props }) {
     const { imageID } = useParams();
-    console.log('Day la imageID dang duoc edit', imageID);
+
+    localStorage.setItem('isImageEdit', imageID);
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(null);
@@ -39,7 +40,6 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
                 console.error('Error fetching image:', error);
             }
         };
-
         fetchData();
     }, [imageID]);
 
@@ -60,7 +60,6 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
                 context.drawImage(img, 0, 0, canvas.width, canvas.height);
                 // context.drawImage(img, 0, 0);
             };
-
             img.onerror = (error) => {
                 console.error('Error loading image:', error);
             };
@@ -220,9 +219,6 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         const targetColor = getPixel(imageData, prevMouseX, prevMouseY);
         const fillColor = getFillColor();
 
-        console.log('Target Color:', targetColor);
-        console.log('Fill Color:', fillColor);
-
         if (!colorsMatch(targetColor, fillColor, 30)) {
             fillPixel(imageData, prevMouseX, prevMouseY, targetColor, fillColor);
             context.putImageData(imageData, 0, 0);
@@ -357,7 +353,7 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
 
     return (
         <section className={cx('drawing-board')}>
-            <h2>Edit Image {imageID}</h2>
+            <h2>Edit Image {localStorage.getItem('isImageEdit')}</h2>
 
             <div className={cx('actions')}>
                 <button
