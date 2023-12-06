@@ -83,10 +83,11 @@ function History(props) {
         }
     };
 
-    const deleteAllImages = async () => {
+    const deleteAllImages = async (email) => {
+        const user_id = await getUserIDByUserEmail(email);
         try {
             setDeleting(true);
-            await fetch(`${pathBackEnd}/deleteAllImages`, {
+            await fetch(`${pathBackEnd}/deleteAllImageByUserID/${user_id}`, {
                 method: 'DELETE',
             });
             fetchImages();
@@ -101,12 +102,6 @@ function History(props) {
         return formattedDate;
     };
     localStorage.setItem('isEditValue', false);
-
-    // const isEditMode = async (value) => {
-    //     localStorage.setItem('isEditValue', value);
-    //     await props.setEditMode(localStorage.getItem('isEditValue'));
-    //     console.log('editMode:', props.editMode);
-    // };
 
     const isEditMode = async (value) => {
         props.setEditMode(value);
@@ -153,7 +148,7 @@ function History(props) {
                             <div className={cx('container-header')}>
                                 <h3>{localStorage.getItem('email')} </h3>
                                 <div className={cx('buttons-action')}>
-                                    <button onClick={deleteAllImages()}>Delete All</button>
+                                    <button onClick={() => deleteAllImages(localStorage.getItem('email'))}>Delete All</button>
                                 </div>
                             </div>
                             <div className={cx('list-images')}>
