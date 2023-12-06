@@ -96,7 +96,7 @@ function DefaultLayout(props) {
                     // setIsDragging={setIsDragging}
                 />
                 <div className={cx('container')}>
-                    {editMode ? (
+                    {localStorage.getItem('isEditValue') ? (
                         <Edit
                             userInfo={userInfo}
                             selectedTool={selectedTool}

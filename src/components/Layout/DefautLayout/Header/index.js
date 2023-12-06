@@ -70,16 +70,31 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
     }, []); // Empty dependency array means this effect runs once when the component mounts
 
     const saveCanvasImage = async (id, image_data_url) => {
-        try {
-            const response = await axios.post(`${pathBackEnd}/saveimages`, {
-                user_id: id,
-                image_data: image_data_url,
-            });
+            try {
+                const response = await axios.post(`${pathBackEnd}/saveimages`, {
+                    user_id: id,
+                    image_data: image_data_url,
+                });
+    
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error saving canvas image:', error);
+                console.log('Error details:', error.response.data);
+            }
+    };
 
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error saving canvas image:', error);
-        }
+    const updateCanvasImage = async (id, image_data_url) => {
+            try {
+                const response = await axios.put(`${pathBackEnd}/editImage/${id}`,
+                 {
+                    imageID: id,
+                    image_data: image_data_url,
+                });
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error saving canvas image:', error);
+                console.log('Error details:', error.response.data);
+            }
     };
 
     const handleSaveAndDownload = () => {
@@ -97,11 +112,15 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
             if (localStorage.getItem('email')) {
                 const userID = localStorage.getItem('userID');
 
-                // Save canvas image to the database
-                saveCanvasImage(userID, imageDataURL);
+                if (localStorage.getItem("isEditValue") === "true") {
+                    updateCanvasImage(localStorage.getItem("isImageEdit"), imageDataURL);
+                } else {
+                    // Save canvas image to the database
+                    saveCanvasImage(userID, imageDataURL);
+                }
 
                 // Construct a custom filename based on user and image IDs
-                const fileName = `paintingimage__createby_${localStorage.getItem(
+                const fileName = `paintingimage__createby_${localStorage.getItem(   
                     'email',
                 )}_${timestamp}_${randomString}.jpg`;
 
@@ -152,7 +171,10 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
             {localStorage.getItem('email') ? (
                 <div className={cx('right-items')}>
                     <Link to={`${config.routes.history}`}>
-                        <img src={user} alt="user" className={cx('items-login')} />
+                        <div className={cx('wrapper-user', 'items-logins')}>
+                            <img src={user} alt="user" />
+                            <p>{localStorage.getItem('email')}</p>
+                        </div>
                     </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
                 </div>
