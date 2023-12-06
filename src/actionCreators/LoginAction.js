@@ -1,40 +1,37 @@
 import axios from "axios";
 
-const url =  "http://localhost:8081"
-// const url =  "https://backendpainter-v1.onrender.com"
+//Production
+// const url = 'https://backendpainter-v1.onrender.com';
+//Testing
+const url = 'http://localhost:8081';
 
-export const loginUser = (data, navigate) => {
+
+export const loginUser = (data) => {
   return async (dispatch) => {
+    let response;
     try {
-      console.log('Before axios.post');
-      const response = await axios.post(`${url}/login`, data);
-      console.log('After axios.post');
+      response = await axios.post(`${url}/login`, data);
+      const output = response.data;
 
-      if (response.status === 200 && response.data.status === "success") {
-        console.log('Successful login:', response.data);
+      if (output.status === "success") {
+        localStorage.setItem('email',`${data.email}`);
+        localStorage.setItem('token-user',`${output.token}`);
         dispatch({
           type: "LOGIN_USER_SUCCESS",
-          payload: response.data.token,
-        });
-        // Redirect to the home page or any other route
-        navigate('/');
-      } else {
-        console.log('Login failed:', response.data.error);
-        dispatch({
-          type: "LOGIN_USER_FAILED",
-          payload: response.data.error,
+          payload: output.token,
         });
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      const output = error.response ? error.response.data : { error: 'Unknown error' };
+      const output = error.response.data;
       dispatch({
         type: "LOGIN_USER_FAILED",
         payload: output.error,
       });
     }
+    return response; // Return the entire response object
   };
 };
+
 
 export const registerUser = (data) => {
   return async (dispatch) => {
@@ -58,6 +55,7 @@ export const registerUser = (data) => {
         });
       } else {
         dispatch({
+          // error of same username/email/phoneNumber,it has to be unique no duplication/same username.
           type: "REGISTER_USER_INVALID",
           payload: output.error,
         });
@@ -73,25 +71,3 @@ export const userLogout = () => {
     });
   };
 };
-// export const loginAdmin = (data) => {
-//   return async (dispatch) => {
-//     try {
-//       const response = await axios.post(`${url}/login`, data);
-//       const output = response.data;
-
-//       if (output.status === "success") {
-//         dispatch({
-//           type: "LOGIN_ADMIN_SUCCESS",
-//           payload: output.token,
-//         });
-//       }
-//     } catch (error) {
-//       const output = error.response.data;
-//       dispatch({
-//         type: "LOGIN_ADMIN_FAILED",
-//         payload: output.error,
-//       });
-//     }
-//   };
-// };
-

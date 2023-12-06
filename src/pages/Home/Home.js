@@ -2,14 +2,16 @@ import styles from './Home.module.scss';
 import classNames from 'classnames/bind';
 import undoAction from '~/assets/icons/rotate-left-solid.svg';
 import redoAction from '~/assets/icons/rotate-right-solid.svg';
+// import { useUser } from '~/hook/UserContext';
+// import Konva from 'konva';
+// import { Stage, Layer, Rect, Text } from 'react-konva';
 
 import { useEffect, useRef, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
-function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
-    const canvasRef = useRef(null);
-    // const offscreenCanvasRef = useRef(null); // Reference for the offscreen canvas
+function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
+    // const canvasRef = useRef(null);
 
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(null);
@@ -24,15 +26,42 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const context = canvas.getContext('2d');
 
         if (context) {
+            context.willReadFrequently = true;
             setCanvasBackground(context);
             setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
         }
+
         if (isClear) {
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             clearCanvas();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isClear]);
+    }, [isClear, canvasRef]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+
+        if (!canvas || !context) {
+            console.error('Canvas or context not available.');
+            return;
+        }
+
+        //set the minimum width and height
+        const minWidth = 1;
+        const minHeight = 1;
+
+        // Update width and height if they are less than the minimum
+        const newWidth = Math.max(width, minWidth);
+        const newHeight = Math.max(height, minHeight);
+
+        if (context) {
+            context.canvas.width = newWidth;
+            context.canvas.height = newHeight;
+            setCanvasBackground(context);
+            setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [width, height, canvasRef]);
 
     const setCanvasBackground = (context) => {
         context.fillStyle = '#fff';
@@ -43,6 +72,7 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
     const saveCanvasState = (context) => {
         const canvas = context.canvas;
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        setSnapshot(imageData);
         undoStack.current.push(imageData);
         redoStack.current = []; // Clear the redoStack after saving a new state
     };
@@ -75,6 +105,7 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
+
         setIsDrawing(true);
         setIsClear(false);
         setPrevMouseX(e.nativeEvent.offsetX);
@@ -93,6 +124,7 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
+
         context.putImageData(snapshot, 0, 0);
 
         if (selectedTool === 'brush' || selectedTool === 'eraser') {
@@ -297,7 +329,6 @@ function Home({ selectedTool, brushWidth, selectedColor, width, height, isClear,
         context.clearRect(0, 0, canvas.width, canvas.height);
         setCanvasBackground(context);
     };
-
 
     return (
         <section className={cx('drawing-board')}>

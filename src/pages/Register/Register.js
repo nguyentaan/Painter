@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { isEmail } from 'validator';
 import styles from './Register.module.scss';
 import classNames from 'classnames/bind';
-import { useUser } from '../../hook/UserContext';
 
 const cx = classNames.bind(styles);
+// const path = 'https://backendpainter-v1.onrender.com';
+const path = 'http://localhost:8081';
 
 function Register() {
     const [user, setUser] = useState([]);
@@ -21,11 +22,9 @@ function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordMismatch, setPasswordMismatch] = useState(false);
 
-    const { pathBackEnd } = useUser();
-
-    useEffect(() => {
-        fetchUser();
-    }, []);
+    // useEffect(() => {
+    //     fetchUser();
+    // }, []);
 
     const handleMailChange = (e) => {
         setEmail(e.target.value);
@@ -44,9 +43,9 @@ function Register() {
 
     const fetchUser = async () => {
         try {
-            const response = await axios.get(`${pathBackEnd}/users`);
+            const response = await axios.get(`${path}/users`);
             setUser(response.data);
-            console.log(response.data);
+            // console.log(response.data);
         } catch (err) {
             console.error('Error fetching user: ', err);
         }
@@ -54,7 +53,7 @@ function Register() {
 
     const handleRegisterUser = (user) => {
         return axios
-            .post(`${pathBackEnd}/create-user/`, user)
+            .post(`${path}/create-user/`, user)
             .then(() => {
                 alert('User registration successfully');
                 fetchUser();

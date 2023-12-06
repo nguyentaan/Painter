@@ -10,9 +10,6 @@ function App() {
             <Router>
                 <div className="App">
                     <Routes>
-                        {' '}
-                        {/* <Route path="/" element={<Home />} />
-                                            <Route path="login" element={<Login />} /> */}{' '}
                         {publicRoutes.map((route, index) => {
                             const Layout = route.layout === null ? Fragment : DefaultLayout;
                             const Page = route.component;

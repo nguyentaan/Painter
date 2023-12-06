@@ -1,8 +1,9 @@
 const routes = {
     home: '/',
-    history:'/history',
+    history: '/history',
     login: '/login',
-    register:'/register',
-}
+    register: '/register',
+    edit: '/edit/:imageID',
+};
 
 export default routes;
