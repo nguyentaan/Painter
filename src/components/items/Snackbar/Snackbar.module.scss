@@ -1,7 +1,7 @@
 /* Snackbar.css */
 .snackbar {
   visibility: hidden;
-  min-width: 250px;
+  min-width: 450px;
   margin: 0;
   background-color: #333;
   color: #fff;
@@ -12,6 +12,7 @@
   z-index: 1;
   left: 50%;
   bottom: 30px;
+  border-radius: 8px;
   transform: translateX(-50%);
 }
 
@@ -48,6 +49,23 @@
 
 .snackbar.error {
   background-color: #f44336; /* Red */
+}
+
+.snackbar .icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+  height: 27px; /* Set the height for the icon */
+}
+
+.snackbar .icon img {
+  width: auto;
+  height: 100%; /* Make the icon fill the entire height of the container */
+}
+
+.snackbar .message {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .snackbar button {
