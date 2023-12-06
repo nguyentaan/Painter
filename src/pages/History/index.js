@@ -87,13 +87,20 @@ function History(props) {
             }));
         } catch (error) {
             console.error('Error deleting image: ', error);
-            setSnackbar({ message: 'Error deleting image', type: 'error' });
         }
     };
-    // useEffect(() => {
-    //     console.log(snackbar);
-    // }, [snackbar]);
 
+    const deleteAllImages = async () => {
+        try {
+            setDeleting(true);
+            await fetch(`${pathBackEnd}/deleteAllImages`, {
+                method: 'DELETE',
+            });
+            fetchImages();
+        } catch (error) {
+            console.error('Error deleting all images: ', error);
+        }
+    };
 
     const formatImageDate = (fullDate) => {
         const dateObject = new Date(fullDate);
@@ -101,12 +108,6 @@ function History(props) {
         return formattedDate;
     };
     localStorage.setItem('isEditValue', false);
-
-    // const isEditMode = async (value) => {
-    //     localStorage.setItem('isEditValue', value);
-    //     await props.setEditMode(localStorage.getItem('isEditValue'));
-    //     console.log('editMode:', props.editMode);
-    // };
 
     const isEditMode = async (value) => {
         props.setEditMode(value);
@@ -153,7 +154,7 @@ function History(props) {
                             <div className={cx('container-header')}>
                                 <h3>{localStorage.getItem('email')} </h3>
                                 <div className={cx('buttons-action')}>
-                                    <button>Delete All</button>
+                                    <button onClick={deleteAllImages()}>Delete All</button>
                                 </div>
                             </div>
                             <div className={cx('list-images')}>
