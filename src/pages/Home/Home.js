@@ -18,6 +18,8 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
 
+    const [boundingBox, setBoundingBox] = useState(null);
+
     const undoStack = useRef([]);
     const redoStack = useRef([]);
 
@@ -106,6 +108,14 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         const context = canvas.getContext('2d');
         if (!context) return;
 
+        // Set initial bounding box
+        setBoundingBox({
+            startX: e.nativeEvent.offsetX,
+            startY: e.nativeEvent.offsetY,
+            endX: e.nativeEvent.offsetX,
+            endY: e.nativeEvent.offsetY,
+        });
+
         setIsDrawing(true);
         setIsClear(false);
         setPrevMouseX(e.nativeEvent.offsetX);
@@ -143,11 +153,26 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         } else if (selectedTool === 'fill') {
             floodFill(context, getFillColor());
         }
+        // Update bounding box
+        setBoundingBox((prevBoundingBox) => ({
+            startX: Math.min(prevBoundingBox.startX, e.nativeEvent.offsetX),
+            startY: Math.min(prevBoundingBox.startY, e.nativeEvent.offsetY),
+            endX: Math.max(prevBoundingBox.endX, e.nativeEvent.offsetX),
+            endY: Math.max(prevBoundingBox.endY, e.nativeEvent.offsetY),
+        }));
     };
 
-    const stopDrawing = () => {
+    const stopDrawing = (e) => {
         setIsDrawing(false);
         updateSnapshot();
+
+        const { startX, startY, endX, endY } = boundingBox || {};
+        console.log('Bounding Box:', {
+            x: startX,
+            y: startY,
+            width: endX - startX,
+            height: endY - startY,
+        });
     };
 
     const drawLine = (context, e) => {
@@ -190,6 +215,9 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         console.log('Flood Fill called');
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
+        if (selectedTool !== 'fill') {
+            return;
+        }
 
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
         const targetColor = getPixel(imageData, prevMouseX, prevMouseY);
@@ -356,7 +384,7 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
                 onMouseDown={startDraw}
                 onMouseMove={drawing}
                 onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
+                // onMouseLeave={stopDrawing}
             ></canvas>
         </section>
     );

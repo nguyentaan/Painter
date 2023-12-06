@@ -143,7 +143,9 @@ function History(props) {
                             <div className={cx('container-header')}>
                                 <h3>{localStorage.getItem('email')} </h3>
                                 <div className={cx('buttons-action')}>
-                                    <button onClick={() => deleteAllImages(localStorage.getItem('email'))}>Delete All</button>
+                                    <button onClick={() => deleteAllImages(localStorage.getItem('email'))}>
+                                        Delete All
+                                    </button>
                                 </div>
                             </div>
                             <div className={cx('list-images')}>
