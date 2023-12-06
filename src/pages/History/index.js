@@ -1,49 +1,51 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import Header from '../../components/Layout/DefautLayout/Header';
+import HeaderHistory from '../../components/Layout/DefautLayout/HeaderHistory';
 import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
-import { useUser } from '../../hook/UserContext';
 import Loader from '~/components/items/Loader';
 import { Link } from 'react-router-dom';
-import useSharedState from '~/hook/useShareState';
+import { connect } from 'react-redux';
+import { userLogout } from '../../actionCreators/LoginAction';
+import { setEditMode } from '~/actionCreators/UserAction';
 
 const cx = classNames.bind(styles);
 
 export const SizeContext = createContext();
 
-function History() {
+function History(props) {
     const [loading, setLoading] = useState(true);
+    const [deleting, setDeleting] = useState(false);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
-    const pathBackEnd = 'https://backendpainter-v1.onrender.com';
-
-    const [updateIsEdit] = useSharedState();
+    const pathBackEnd = 'http://localhost:8081';
+    const [images, setImages] = useState([]);
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
         setHeight(newHeight);
     };
 
-    const [images, setImages] = useState([]);
-    const { userInfo, logout } = useUser();
-
     const handleLogout = () => {
-        logout();
+        props.userLogout();
     };
 
-    const handleDownloadImage = () => {
-        const canvas = document.getElementById('myCanvas');
-        if (canvas) {
-            const timestamp = new Date().getTime();
-            const randomString = Math.random().toString(36).substring(7);
-            const fileName = `drawing_${timestamp}_${randomString}.jpg`;
-            const imageDataURL = canvas.toDataURL('image/jpeg');
-            const link = document.createElement('a');
-            link.href = imageDataURL;
-            link.download = fileName;
-            link.click();
+    const getUserIDByUserEmail = async (email) => {
+        try {
+            const response = await fetch(`${pathBackEnd}/users/getUserIDByEmail`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+            const responseData = await response.json();
+            console.log('getUserIDByUserEmail response:', responseData);
+            return responseData.userID; // Adjust this based on your actual response structure
+        } catch (error) {
+            console.error('Error fetching user ID:', error);
+            return null; // Handle the error appropriately in your application
         }
     };
 
@@ -54,14 +56,43 @@ function History() {
 
             console.log('API response:', responseData);
 
-            const data = Array.isArray(responseData.images) ? responseData.images : [];
-
-            const userImages = data.filter((image) => image.user_id === userInfo.user_id);
+            const imagesArray = Array.isArray(responseData.images) ? responseData.images : [];
+            const userId = await getUserIDByUserEmail(localStorage.getItem('email'));
+            console.log('The current user ' + userId + ' is ');
+            const userImages = imagesArray.filter((image) => image.user_id === userId);
             setImages(userImages);
             setLoading(false);
+            setDeleting(false);
         } catch (error) {
             console.error('Error fetching images:', error);
             setLoading(false);
+            setDeleting(false);
+        }
+    };
+
+    const deleteImageId = async (imageID) => {
+        try {
+            setDeleting(true);
+            await fetch(`${pathBackEnd}/delete/${imageID}`, {
+                method: 'DELETE',
+            });
+
+            fetchImages();
+        } catch (error) {
+            console.error('Error deleting image: ', error);
+        }
+    };
+
+    const deleteAllImages = async (email) => {
+        const user_id = await getUserIDByUserEmail(email);
+        try {
+            setDeleting(true);
+            await fetch(`${pathBackEnd}/deleteAllImageByUserID/${user_id}`, {
+                method: 'DELETE',
+            });
+            fetchImages();
+        } catch (error) {
+            console.error('Error deleting all images: ', error);
         }
     };
 
@@ -70,23 +101,30 @@ function History() {
         const formattedDate = dateObject.toLocaleDateString();
         return formattedDate;
     };
+    localStorage.setItem('isEditValue', false);
+
+    const isEditMode = async (value) => {
+        props.setEditMode(value);
+    };
 
     useEffect(() => {
-        if (userInfo === null) {
+        props.setEditMode(true);
+    }, []);
+
+    if (localStorage.getItem('token-user')) {
+        // var userData = parseJwt(localStorage.getItem("token-user"));
+    }
+
+    useEffect(() => {
+        if (localStorage.getItem('email') === null) {
             alert('Directing you back to home');
             window.location.href = '/'; // Redirect to the home page
+            props.setEditMode(false);
         } else {
             // Only fetch images if userInfo is not null
             fetchImages();
         }
-    }, [userInfo]);
-
-    console.log('is user: ', userInfo);
-
-    if (userInfo === null) {
-        // Don't render anything if userInfo is null
-        return null;
-    }
+    }, []);
 
     return (
         <SizeContext.Provider
@@ -98,16 +136,21 @@ function History() {
                 setSize,
             }}
         >
-            <Header userInfo={userInfo} handleLogout={handleLogout} handleDownloadImage={handleDownloadImage} />{' '}
+            <HeaderHistory handleLogout={handleLogout} />{' '}
             <div className={cx('wrapper')}>
                 <div className={cx('container-history')}>
-                    {loading ? (
+                    {loading || deleting ? (
                         <div className={cx('overlay')}>
                             <Loader />
                         </div>
                     ) : (
                         <>
-                            <h3> This is a history details of User: {userInfo.user_email} </h3>{' '}
+                            <div className={cx('container-header')}>
+                                <h3>{localStorage.getItem('email')} </h3>
+                                <div className={cx('buttons-action')}>
+                                    <button onClick={() => deleteAllImages(localStorage.getItem('email'))}>Delete All</button>
+                                </div>
+                            </div>
                             <div className={cx('list-images')}>
                                 {images.map((image) => (
                                     <div key={image.imageID} className={cx('image-item')}>
@@ -117,9 +160,9 @@ function History() {
                                         </p>
                                         <div className={cx('buttons-action')}>
                                             <Link to={`/edit/${image.imageID}`}>
-                                                <button onClick={updateIsEdit}>Edit</button>
+                                                <button onClick={() => isEditMode(true)}>Edit</button>
                                             </Link>
-                                            <button>Delete</button>
+                                            <button onClick={() => deleteImageId(image.imageID)}>Delete</button>
                                         </div>
                                     </div>
                                 ))}
@@ -132,4 +175,16 @@ function History() {
     );
 }
 
-export default History;
+const mapStateToProps = (state) => {
+    return {
+        tokenUser: state.LoginReducer.tokenUser,
+        dataCart: state.UserReducer.dataCart,
+        editMode: state.UserReducer.editMode,
+    };
+};
+
+const mapDispatchToProps = {
+    userLogout,
+    setEditMode,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(History);
