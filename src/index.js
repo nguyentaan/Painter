@@ -19,11 +19,11 @@ store.subscribe(() => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Provider store={store}>
-        <React.StrictMode>
+        {/* <React.StrictMode> */}
             <GlobalStyles>
                 <App />
             </GlobalStyles>
-        </React.StrictMode>
+        {/* </React.StrictMode> */}
     </Provider>,
 );
 // If you want to start measuring performance in your app, pass a function
