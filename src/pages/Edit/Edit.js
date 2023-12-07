@@ -18,13 +18,13 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
 
-    // const pathBackEnd = 'https://backendpainter-v1.onrender.com';
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com';
     const [imageData, setImageData] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8081/getImage/${imageID}`);
+                const response = await axios.get(`${pathBackEnd}/getImage/${imageID}`);
                 if (response.status === 200) {
                     const imageDataFromResponse = response.data.images[0]?.image_data;
                     if (imageDataFromResponse) {

@@ -12,8 +12,8 @@ import exit from '~/assets/icons/Exit-1.svg';
 const cx = classNames.bind(styles);
 
 function Header({ canvasRef, handleLogout, handleDownloadImage }) {
-    // const pathBackEnd = 'https://backendpainter-v1.onrender.com'
-    const pathBackEnd = 'http://localhost:8081';
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com'
+    // const pathBackEnd = 'http://localhost:8081';
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
