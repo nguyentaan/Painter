@@ -9,12 +9,15 @@ import { useUser } from '../../../hook/UserContext';
 import { connect } from 'react-redux';
 import { userLogout } from '../../../actionCreators/LoginAction';
 import { setEditMode } from '../../../actionCreators/UserAction';
+import { useNavigate  } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 export const SizeContext = createContext();
 
 function DefaultLayout(props) {
+    const navigate = useNavigate();
+
     const [selectedTool, setSelectedTool] = useState('brush');
     const [brushWidth, setBrushWidth] = useState(5);
     const [selectedColor, setSelectedColor] = useState('rgb(0,0,0)');
@@ -59,6 +62,7 @@ function DefaultLayout(props) {
     const handleLogout = () => {
         props.userLogout();
         logout();
+        navigate('/');
     };
 
     const handleDownloadImage = () => {
