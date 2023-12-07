@@ -1,9 +1,9 @@
 import axios from "axios";
 
 //Production
-// const url = 'https://backendpainter-v1.onrender.com';
+const url = 'https://backendpainter-v1.onrender.com';
 //Testing
-const url = 'http://localhost:8081';
+// const url = 'http://localhost:8081';
 
 
 export const loginUser = (data) => {

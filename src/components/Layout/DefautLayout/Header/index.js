@@ -16,8 +16,8 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarType, setSnackbarType] = useState('success');
-    // const pathBackEnd = 'https://backendpainter-v1.onrender.com'
-    const pathBackEnd = 'http://localhost:8081';
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com'
+    // const pathBackEnd = 'http://localhost:8081';
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -48,7 +48,9 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
     const handleQuit = () => {
         // Clear localStorage when logging out
         localStorage.removeItem('email');
+        localStorage.removeItem('isEditValue');
         localStorage.removeItem('token-user');
+        localStorage.removeItem('isImageEdit');
         handleLogout();
 
         openSnackbar('Logout successful!', 'success');

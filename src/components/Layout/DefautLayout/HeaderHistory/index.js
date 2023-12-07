@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+
 import styles from './HeaderHistory.module.scss';
 import classNames from 'classnames/bind';
 import config from '~/config';
@@ -26,6 +27,7 @@ function HeaderHistory({ handleLogout }) {
     const closeSnackbar = () => {
         setSnackbarVisible(false);
     };
+
     const handleQuit = () => {
         // Clear localStorage when logging out
         localStorage.removeItem('email');
@@ -47,14 +49,10 @@ function HeaderHistory({ handleLogout }) {
     useEffect(() => {
         if (localStorage.getItem('email') === null) {
             alert('Directing you back to home');
-            window.location.href = '/'; // Redirect to the home page
             setEditMode(false);
+            navigate('/');
         }
     }, []);
-
-    const isEditMode = async (value) => {
-        localStorage.setItem('isEditValue', value);
-    };
 
     const handleBack = () => {
         localStorage.removeItem('isEditValue');
