@@ -20,7 +20,7 @@ function History(props) {
     const [deleting, setDeleting] = useState(false);
     const [width, setWidth] = useState(1080);
     const [height, setHeight] = useState(540);
-    const pathBackEnd = 'http://localhost:8081';
+    const pathBackEnd = 'https://backendpainter-v1.onrender.com';
     const [images, setImages] = useState([]);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [imageToDelete, setImageToDelete] = useState(null);
