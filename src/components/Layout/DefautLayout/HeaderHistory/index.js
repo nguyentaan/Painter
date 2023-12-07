@@ -26,7 +26,6 @@ function HeaderHistory({ handleLogout }, props) {
         if (localStorage.getItem('email') === null) {
             alert('Directing you back to home');
             setEditMode(false);
-            navigate('/');
         }
     }, []);
 

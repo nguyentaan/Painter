@@ -62,7 +62,6 @@ function DefaultLayout(props) {
     const handleLogout = () => {
         props.userLogout();
         logout();
-        navigate('/');
     };
 
     const handleDownloadImage = () => {

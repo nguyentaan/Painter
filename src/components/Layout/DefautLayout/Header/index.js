@@ -8,10 +8,13 @@ import config from '~/config';
 import Dialog from '~/components/items/Dialog';
 import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
+import { useNavigate  } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function Header({ canvasRef, handleLogout, handleDownloadImage }) {
+    const navigate = useNavigate();
+
     const pathBackEnd = 'https://backendpainter-v1.onrender.com'
     // const pathBackEnd = 'http://localhost:8081';
 
