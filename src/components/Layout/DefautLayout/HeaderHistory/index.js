@@ -35,7 +35,7 @@ function HeaderHistory({ handleLogout }, props) {
     const handleBack = () => {
         localStorage.removeItem('isEditValue');
         localStorage.removeItem('isImageEdit');
-    }
+    };
 
     return (
         <header className={cx('wrapper')}>
@@ -58,10 +58,7 @@ function HeaderHistory({ handleLogout }, props) {
             {localStorage.getItem('email') ? (
                 <div className={cx('right-items')}>
                     <Link to={`${config.routes.history}`}>
-                        <div className={cx('wrapper-user', 'items-logins')}>
-                            <img src={user} alt="user"/>
-                            <p>{localStorage.getItem('email')}</p>
-                        </div>
+                        <img src={user} alt="user" className={cx('items-login')} />
                     </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
                 </div>

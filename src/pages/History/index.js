@@ -5,6 +5,7 @@ import styles from './History.module.scss';
 import classNames from 'classnames/bind';
 import { createContext } from 'react';
 import Loader from '~/components/items/Loader';
+import Snackbar from '~/components/items/Snackbar';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { userLogout } from '../../actionCreators/LoginAction';
@@ -21,6 +22,39 @@ function History(props) {
     const [height, setHeight] = useState(540);
     const pathBackEnd = 'http://localhost:8081';
     const [images, setImages] = useState([]);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [imageToDelete, setImageToDelete] = useState(null);
+    const [deleteImages, setDeleteImages] = useState(false);
+    const [snackbarVisible, setSnackbarVisible] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarType, setSnackbarType] = useState('success');
+
+    const openSnackbar = (message, type) => {
+        setSnackbarMessage(message);
+        setSnackbarType(type);
+        setSnackbarVisible(true);
+    };
+
+    const closeSnackbar = () => {
+        setSnackbarVisible(false);
+    }
+
+    const handleOverlayClick = (e) => {
+        if (e.target === e.currentTarget) {
+            closeDeleteDialog();
+        }
+    };
+
+    const openDeleteDialog = (isDeleteAll) => {
+        setShowDeleteDialog(true);
+        setDeleteImages(isDeleteAll);
+    };
+
+    const closeDeleteDialog = () => {
+        setShowDeleteDialog(false);
+        setDeleteImages(false);
+        setImageToDelete(null);
+    };
 
     const setSize = (newWidth, newHeight) => {
         setWidth(newWidth);
@@ -75,9 +109,13 @@ function History(props) {
                 method: 'DELETE',
             });
 
+            closeDeleteDialog();
             fetchImages();
+            openSnackbar('Image deleted successfully', 'success');
         } catch (error) {
             console.error('Error deleting image: ', error);
+            closeDeleteDialog();
+            openSnackbar('Failed to delete image', 'error');
         }
     };
 
@@ -88,9 +126,13 @@ function History(props) {
             await fetch(`${pathBackEnd}/deleteAllImageByUserID/${user_id}`, {
                 method: 'DELETE',
             });
+            closeDeleteDialog();
             fetchImages();
+            openSnackbar('All images deleted successfully', 'success');
         } catch (error) {
             console.error('Error deleting all images: ', error);
+            closeDeleteDialog();
+            openSnackbar('Failed to delete all images', 'error');
         }
     };
 
@@ -143,9 +185,10 @@ function History(props) {
                             <div className={cx('container-header')}>
                                 <h3>{localStorage.getItem('email')} </h3>
                                 <div className={cx('buttons-action')}>
-                                    <button onClick={() => deleteAllImages(localStorage.getItem('email'))}>
+                                    {/* <button onClick={() => deleteAllImages(localStorage.getItem('email'))}>
                                         Delete All
-                                    </button>
+                                    </button> */}
+                                    <button onClick={() => openDeleteDialog(true)}>Delete All</button>
                                 </div>
                             </div>
                             <div className={cx('list-images')}>
@@ -159,11 +202,51 @@ function History(props) {
                                             <Link to={`/edit/${image.imageID}`}>
                                                 <button onClick={() => isEditMode(true)}>Edit</button>
                                             </Link>
-                                            <button onClick={() => deleteImageId(image.imageID)}>Delete</button>
+                                            <button
+                                                onClick={() => {
+                                                    openDeleteDialog();
+                                                    setImageToDelete(image.imageID);
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
                                         </div>
+
+                                        {/* Confirmation Dialog for Delete Single Image */}
+                                        {showDeleteDialog && !deleteImages && image.imageID === imageToDelete && (
+                                            <div className={cx('confirmation-dialog')} onClick={handleOverlayClick}>
+                                                <div className={cx('confirmation-dialog-content')}>
+                                                    <p>Are you sure you want to delete image?</p>
+                                                    <div className={cx('confirmation-dialog-buttons')}>
+                                                        <button onClick={() => deleteImageId(image.imageID)}>
+                                                            Yes
+                                                        </button>
+                                                        <button onClick={() => closeDeleteDialog()}>No</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
+                            {/* Confirmation Dialog for Delete All */}
+                            {showDeleteDialog && deleteImages && (
+                                <div className={cx('confirmation-dialog')} onClick={handleOverlayClick}>
+                                    <div className={cx('confirmation-dialog-content')}>
+                                        <p>Are you sure you want to delete all images?</p>
+                                        <div className={cx('confirmation-dialog-buttons')}>
+                                            <button onClick={() => deleteAllImages(localStorage.getItem('email'))}>
+                                                Yes
+                                            </button>
+                                            <button onClick={() => closeDeleteDialog()}>No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {/* Snackbar */}
+                            {snackbarVisible && (
+                                <Snackbar message={snackbarMessage} type={snackbarType} onClose={closeSnackbar} />
+                            )}
                         </>
                     )}
                 </div>
