@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link , useNavigate  } from 'react-router-dom';
 import { useEffect } from 'react';
 import styles from './HeaderHistory.module.scss';
 import classNames from 'classnames/bind';
@@ -11,6 +11,8 @@ import { connect } from 'react-redux';
 
 const cx = classNames.bind(styles);
 function HeaderHistory({ handleLogout }, props) {
+    const navigate = useNavigate();
+
     const handleQuit = () => {
         // Clear localStorage when logging out
         localStorage.removeItem('email');
@@ -23,14 +25,10 @@ function HeaderHistory({ handleLogout }, props) {
     useEffect(() => {
         if (localStorage.getItem('email') === null) {
             alert('Directing you back to home');
-            window.location.href = '/'; // Redirect to the home page
             setEditMode(false);
+            navigate('/');
         }
     }, []);
-
-    const isEditMode = async (value) => {
-        localStorage.setItem('isEditValue', value);
-    };
 
     const handleBack = () => {
         localStorage.removeItem('isEditValue');
