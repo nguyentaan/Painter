@@ -34,7 +34,9 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
     const handleQuit = () => {
         // Clear localStorage when logging out
         localStorage.removeItem('email');
+        localStorage.removeItem('isEditValue');
         localStorage.removeItem('token-user');
+        localStorage.removeItem('isImageEdit');
         handleLogout();
     };
 
