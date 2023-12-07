@@ -2,7 +2,7 @@ import styles from './Edit.module.scss';
 import classNames from 'classnames/bind';
 import undoAction from '~/assets/icons/rotate-left-solid.svg';
 import redoAction from '~/assets/icons/rotate-right-solid.svg';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -17,6 +17,9 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
     const [prevMouseX, setPrevMouseX] = useState(null);
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
+
+    const [undoStack, setUndoStack] = useState([]);
+    const [redoStack, setRedoStack] = useState([]);
 
     // const pathBackEnd = 'https://backendpainter-v1.onrender.com';
     const [imageData, setImageData] = useState('');
@@ -43,8 +46,6 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         fetchData();
     }, [imageID]);
 
-    const undoStack = useRef([]);
-    const redoStack = useRef([]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -95,10 +96,10 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
     };
 
     const saveCanvasState = (context) => {
-        const canvas = canvasRef.current;
+        const canvas = context.canvas;
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        undoStack.current.push(imageData);
-        redoStack.current = []; // Clear the redoStack after saving a new state
+        setUndoStack([...undoStack, imageData]);
+        setRedoStack([]); // Clear the redoStack after saving a new state
     };
 
     const undo = () => {
@@ -106,9 +107,9 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        if (undoStack.current.length > 0) {
-            const lastState = undoStack.current.pop();
-            redoStack.current.push(context.getImageData(0, 0, canvas.width, canvas.height));
+        if (undoStack.length > 0) {
+            const lastState = undoStack.pop();
+            setRedoStack([...redoStack, context.getImageData(0, 0, canvas.width, canvas.height)]);
             context.putImageData(lastState, 0, 0);
         }
     };
@@ -118,12 +119,13 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        if (redoStack.current.length > 0) {
-            const nextState = redoStack.current.pop();
-            undoStack.current.push(context.getImageData(0, 0, canvas.width, canvas.height));
+        if (redoStack.length > 0) {
+            const nextState = redoStack.pop();
+            setUndoStack([...undoStack, context.getImageData(0, 0, canvas.width, canvas.height)]);
             context.putImageData(nextState, 0, 0);
         }
     };
+
 
     const startDraw = (e) => {
         const canvas = canvasRef.current;
@@ -357,14 +359,14 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
 
             <div className={cx('actions')}>
                 <button
-                    className={cx(styles['button'], { [styles['disabled-button']]: undoStack.current.length === 0 })}
+                    className={cx(styles['button'], { [styles['disabled-button']]: undoStack.length === 0 })}
                     onClick={undo}
                 >
                     {' '}
                     <img src={undoAction} alt="undo" className={cx('items')} />
                 </button>
                 <button
-                    className={cx(styles['button'], { [styles['disabled-button']]: redoStack.current.length === 0 })}
+                    className={cx(styles['button'], { [styles['disabled-button']]: redoStack.length === 0 })}
                     onClick={redo}
                 >
                     {' '}

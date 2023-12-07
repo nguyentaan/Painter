@@ -6,22 +6,18 @@ import redoAction from '~/assets/icons/rotate-right-solid.svg';
 // import Konva from 'konva';
 // import { Stage, Layer, Rect, Text } from 'react-konva';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
 function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, height, isClear, setIsClear }) {
-    // const canvasRef = useRef(null);
-
     const [isDrawing, setIsDrawing] = useState(false);
     const [prevMouseX, setPrevMouseX] = useState(null);
     const [prevMouseY, setPrevMouseY] = useState(null);
     const [snapshot, setSnapshot] = useState(null);
 
-    const [boundingBox, setBoundingBox] = useState(null);
-
-    const undoStack = useRef([]);
-    const redoStack = useRef([]);
+    const [undoStack, setUndoStack] = useState([]);
+    const [redoStack, setRedoStack] = useState([]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -65,6 +61,15 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [width, height, canvasRef]);
 
+    const clearCanvas = () => {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+        //Clear Canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        setCanvasBackground(context);
+    };
+
     const setCanvasBackground = (context) => {
         context.fillStyle = '#fff';
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -74,9 +79,8 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
     const saveCanvasState = (context) => {
         const canvas = context.canvas;
         const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        setSnapshot(imageData);
-        undoStack.current.push(imageData);
-        redoStack.current = []; // Clear the redoStack after saving a new state
+        setUndoStack([...undoStack, imageData]);
+        setRedoStack([]); // Clear the redoStack after saving a new state
     };
 
     const undo = () => {
@@ -84,9 +88,9 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        if (undoStack.current.length > 0) {
-            const lastState = undoStack.current.pop();
-            redoStack.current.push(context.getImageData(0, 0, canvas.width, canvas.height));
+        if (undoStack.length > 0) {
+            const lastState = undoStack.pop();
+            setRedoStack([...redoStack, context.getImageData(0, 0, canvas.width, canvas.height)]);
             context.putImageData(lastState, 0, 0);
         }
     };
@@ -96,9 +100,9 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         const context = canvas.getContext('2d');
         if (!context) return;
 
-        if (redoStack.current.length > 0) {
-            const nextState = redoStack.current.pop();
-            undoStack.current.push(context.getImageData(0, 0, canvas.width, canvas.height));
+        if (redoStack.length > 0) {
+            const nextState = redoStack.pop();
+            setUndoStack([...undoStack, context.getImageData(0, 0, canvas.width, canvas.height)]);
             context.putImageData(nextState, 0, 0);
         }
     };
@@ -107,14 +111,6 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         if (!context) return;
-
-        // Set initial bounding box
-        setBoundingBox({
-            startX: e.nativeEvent.offsetX,
-            startY: e.nativeEvent.offsetY,
-            endX: e.nativeEvent.offsetX,
-            endY: e.nativeEvent.offsetY,
-        });
 
         setIsDrawing(true);
         setIsClear(false);
@@ -153,26 +149,11 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         } else if (selectedTool === 'fill') {
             floodFill(context, getFillColor());
         }
-        // Update bounding box
-        setBoundingBox((prevBoundingBox) => ({
-            startX: Math.min(prevBoundingBox.startX, e.nativeEvent.offsetX),
-            startY: Math.min(prevBoundingBox.startY, e.nativeEvent.offsetY),
-            endX: Math.max(prevBoundingBox.endX, e.nativeEvent.offsetX),
-            endY: Math.max(prevBoundingBox.endY, e.nativeEvent.offsetY),
-        }));
     };
 
     const stopDrawing = (e) => {
         setIsDrawing(false);
         updateSnapshot();
-
-        const { startX, startY, endX, endY } = boundingBox || {};
-        console.log('Bounding Box:', {
-            x: startX,
-            y: startY,
-            width: endX - startX,
-            height: endY - startY,
-        });
     };
 
     const drawLine = (context, e) => {
@@ -349,30 +330,19 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
         if (context) setSnapshot(context.getImageData(0, 0, canvas.width, canvas.height));
     };
 
-    const clearCanvas = () => {
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        if (!context) return;
-        //Clear Canvas
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        setCanvasBackground(context);
-    };
-
     return (
         <section className={cx('drawing-board')}>
             <div className={cx('actions')}>
                 <button
-                    className={cx(styles['button'], { [styles['disabled-button']]: undoStack.current.length === 0 })}
+                    className={cx(styles['button'], { [styles['disabled-button']]: undoStack.length === 0 })}
                     onClick={undo}
                 >
-                    {' '}
                     <img src={undoAction} alt="undo" className={cx('items')} />
                 </button>
                 <button
-                    className={cx(styles['button'], { [styles['disabled-button']]: redoStack.current.length === 0 })}
+                    className={cx(styles['button'], { [styles['disabled-button']]: redoStack.length === 0 })}
                     onClick={redo}
                 >
-                    {' '}
                     <img src={redoAction} alt="redo" className={cx('items')} />
                 </button>
             </div>
@@ -384,7 +354,6 @@ function Home({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
                 onMouseDown={startDraw}
                 onMouseMove={drawing}
                 onMouseUp={stopDrawing}
-                // onMouseLeave={stopDrawing}
             ></canvas>
         </section>
     );

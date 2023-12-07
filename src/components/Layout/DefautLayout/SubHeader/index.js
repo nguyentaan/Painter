@@ -7,7 +7,7 @@ import Line from '~/assets/icons/Line-Tool.svg';
 import Brush from '~/assets/icons/Brush-1.svg';
 import Eraser from '~/assets/icons/Eraser-Tool.svg';
 import Fill from '~/assets/icons/Paint-Bucket.svg';
-import Select from '~/assets/icons/Direction-Select.svg';
+// import Select from '~/assets/icons/Direction-Select.svg';
 import trash from '~/assets/icons/trash-solid.svg';
 import { useState } from 'react';
 
@@ -110,7 +110,7 @@ function SubHeader({
             {/* ------------------------------------Options------------------------------- */}
             <div className={cx('column')}>
                 <label className={cx('title')}>Options</label>
-                <ul className={cx('options', 'grid-tool')}>
+                <ul className={cx('options', 'grid-tool', 'grid-3')}>
                     <li
                         className={cx('option', 'tool', { active: selectedTool === 'brush' })}
                         id="brush"
@@ -135,14 +135,14 @@ function SubHeader({
                         <img src={Fill} alt="Fill" />
                         <span>Fill</span>
                     </li>
-                    <li
+                    {/* <li
                         className={cx('option', 'tool', { active: selectedTool === 'selection' })}
                         id="selection"
                         onClick={() => handleToolClick('selection')}
                     >
                         <img src={Select} alt="Selection" />
                         <span>Select</span>
-                    </li>
+                    </li> */}
                 </ul>
                 <div className={cx('option', 'tool', 'slider')}>
                     <input
