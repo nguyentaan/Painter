@@ -355,8 +355,6 @@ function Edit({ canvasRef, selectedTool, brushWidth, selectedColor, width, heigh
 
     return (
         <section className={cx('drawing-board')}>
-            <h2>Edit Image {localStorage.getItem('isImageEdit')}</h2>
-
             <div className={cx('actions')}>
                 <button
                     className={cx(styles['button'], { [styles['disabled-button']]: undoStack.length === 0 })}
