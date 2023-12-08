@@ -6,6 +6,7 @@ import styles from './Header.module.scss';
 import classNames from 'classnames/bind';
 import config from '~/config';
 import Dialog from '~/components/items/Dialog';
+import Snackbar from '~/components/items/Snackbar';
 import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
 import { useNavigate  } from 'react-router-dom';
@@ -15,10 +16,23 @@ const cx = classNames.bind(styles);
 function Header({ canvasRef, handleLogout, handleDownloadImage }) {
     const navigate = useNavigate();
 
+    const [snackbarVisible, setSnackbarVisible] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarType, setSnackbarType] = useState('success');
     const pathBackEnd = 'https://backendpainter-v1.onrender.com'
     // const pathBackEnd = 'http://localhost:8081';
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const openSnackbar = (message, type) => {
+        setSnackbarMessage(message);
+        setSnackbarType(type);
+        setSnackbarVisible(true);
+    };
+
+    const closeSnackbar = () => {
+        setSnackbarVisible(false);
+    };
 
     const handleNewButtonClick = () => {
         setIsDialogOpen(true);
@@ -41,6 +55,8 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
         localStorage.removeItem('token-user');
         localStorage.removeItem('isImageEdit');
         handleLogout();
+
+        openSnackbar('Logout successful!', 'success');
     };
 
     const getUserIDByUserEmail = async (email) => {
@@ -75,31 +91,30 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
     }, []); // Empty dependency array means this effect runs once when the component mounts
 
     const saveCanvasImage = async (id, image_data_url) => {
-            try {
-                const response = await axios.post(`${pathBackEnd}/saveimages`, {
-                    user_id: id,
-                    image_data: image_data_url,
-                });
-    
-                console.log(response.data);
-            } catch (error) {
-                console.error('Error saving canvas image:', error);
-                console.log('Error details:', error.response.data);
-            }
+        try {
+            const response = await axios.post(`${pathBackEnd}/saveimages`, {
+                user_id: id,
+                image_data: image_data_url,
+            });
+
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error saving canvas image:', error);
+            console.log('Error details:', error.response.data);
+        }
     };
 
     const updateCanvasImage = async (id, image_data_url) => {
-            try {
-                const response = await axios.put(`${pathBackEnd}/editImage/${id}`,
-                 {
-                    imageID: id,
-                    image_data: image_data_url,
-                });
-                console.log(response.data);
-            } catch (error) {
-                console.error('Error saving canvas image:', error);
-                console.log('Error details:', error.response.data);
-            }
+        try {
+            const response = await axios.put(`${pathBackEnd}/editImage/${id}`, {
+                imageID: id,
+                image_data: image_data_url,
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error saving canvas image:', error);
+            console.log('Error details:', error.response.data);
+        }
     };
 
     const handleSaveAndDownload = () => {
@@ -117,15 +132,15 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
             if (localStorage.getItem('email')) {
                 const userID = localStorage.getItem('userID');
 
-                if (localStorage.getItem("isEditValue") === "true") {
-                    updateCanvasImage(localStorage.getItem("isImageEdit"), imageDataURL);
+                if (localStorage.getItem('isEditValue') === 'true') {
+                    updateCanvasImage(localStorage.getItem('isImageEdit'), imageDataURL);
                 } else {
                     // Save canvas image to the database
                     saveCanvasImage(userID, imageDataURL);
                 }
 
                 // Construct a custom filename based on user and image IDs
-                const fileName = `paintingimage__createby_${localStorage.getItem(   
+                const fileName = `paintingimage__createby_${localStorage.getItem(
                     'email',
                 )}_${timestamp}_${randomString}.jpg`;
 
@@ -176,7 +191,7 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
             {localStorage.getItem('email') ? (
                 <div className={cx('right-items')}>
                     <Link to={`${config.routes.history}`}>
-                            <img src={user} alt="user" className={cx('items-login')} />
+                        <img src={user} alt="user" className={cx('items-login')} />
                     </Link>
                     <img src={exit} alt="exit" className={cx('items-login')} onClick={handleQuit} />
                 </div>
@@ -190,6 +205,7 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
                     </Link>
                 </div>
             )}
+            {snackbarVisible && <Snackbar message={snackbarMessage} type={snackbarType} onClose={closeSnackbar} />}
         </header>
     );
 }
