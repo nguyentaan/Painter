@@ -55,7 +55,7 @@ function Header({ canvasRef, handleLogout, handleDownloadImage }) {
         localStorage.removeItem('token-user');
         localStorage.removeItem('isImageEdit');
         handleLogout();
-
+        window.location.reload()
         openSnackbar('Logout successful!', 'success');
     };
 
