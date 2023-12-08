@@ -9,10 +9,13 @@ import Dialog from '~/components/items/Dialog';
 import Snackbar from '~/components/items/Snackbar';
 import user from '~/assets/icons/Male-Circle.svg';
 import exit from '~/assets/icons/Exit-1.svg';
+import { useNavigate  } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function Header({ canvasRef, handleLogout, handleDownloadImage }) {
+    const navigate = useNavigate();
+
     const [snackbarVisible, setSnackbarVisible] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarType, setSnackbarType] = useState('success');
